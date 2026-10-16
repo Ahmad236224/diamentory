@@ -594,16 +594,6 @@ html:has(dialog[open]) {
   animation: fade-up var(--dur-2) var(--ease-out) both;
 }
 
-/* Header: slides away while scrolling down on small screens, returns on scroll up */
-.site-header {
-  transition: transform var(--dur-2) var(--ease-out);
-}
-@media (max-width: 1023.98px) {
-  .site-header[data-hidden="true"]:not(:focus-within) {
-    transform: translateY(-100%);
-  }
-}
-
 /* Bag count bump after add-to-bag */
 .bump {
   animation: bump 0.55s var(--ease-out);

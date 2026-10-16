@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NAV_PRIMARY } from "@/content/site";
 import { useCart } from "@/components/cart/CartProvider";
 import { IconBag, IconMenu, IconSearch } from "@/components/ui/icons";
@@ -11,42 +11,19 @@ import { SearchDialog } from "./SearchDialog";
 
 /**
  * Desktop: the three categories · wordmark · New / Search / Bag.
- * Phone: menu · wordmark · search / bag. On small screens the bar slides away while scrolling down
- * and returns on any scroll up (transform only; it never overlays content at rest).
+ * Phone: menu · wordmark · search / bag. The bar stays fixed at the top on every screen size
+ * (sticky filter bars sit directly beneath it).
  */
 export function SiteHeader() {
   const cart = useCart();
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
-  const [hidden, setHidden] = useState(false);
-
-  useEffect(() => {
-    let last = window.scrollY;
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const y = window.scrollY;
-        const d = y - last;
-        if (Math.abs(d) < 8) return;
-        setHidden(d > 0 && y > 240);
-        last = y;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
   const count = cart.hydrated ? cart.count : 0;
   const bump = cart.addSeq > 0 ? "bump" : undefined;
 
   return (
     <>
-      <header data-hidden={hidden} className="site-header sticky top-0 z-40 border-b border-obsidian/10 bg-ivory">
+      <header className="site-header sticky top-0 z-40 border-b border-obsidian/10 bg-ivory">
         <div className="wrap grid h-[var(--header-h)] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-4">
           {/* left */}
           <div className="flex items-center">
