@@ -1,98 +1,83 @@
 import Link from "next/link";
-import { JewelArt } from "@/components/art/JewelArt";
+import { Photo } from "@/components/media/Photo";
+import { IconArrow } from "@/components/ui/icons";
 
 /**
- * 01 — Cinematic hero.
- * Mobile: dark macro study fills the upper frame with the headline set inside it;
- * supporting line and both CTAs always sit within the first viewport.
- * Desktop: asymmetric split — oversized headline left, tall macro right, a small
- * detail study overlapping the seam.
+ * 01 — Signature hero.
+ * Low-key portrait bleeds into the black field; the headline breaks across its dark edge.
+ * A genuine Diamentory piece sits as the inset "N° 01".
  */
 export function Hero() {
   return (
-    <section aria-labelledby="hero-title" className="relative">
-      <div
-        className={[
-          "mx-auto grid max-w-[1800px]",
-          // mobile: image (with headline) on top, copy below — fits one viewport
-          "h-[calc(100svh-var(--header-h)-2.25rem)] min-h-[420px] max-h-[980px] grid-rows-[minmax(0,1fr)_auto]",
-          // desktop: 12-col asymmetric split
-          "lg:min-h-[640px] lg:grid-cols-12 lg:grid-rows-[1fr_auto] lg:gap-x-6 lg:pl-[var(--gutter)]",
-        ].join(" ")}
-      >
-        {/* Primary macro study */}
-        <div className="clip-in relative col-start-1 row-start-1 ml-[var(--gutter)] overflow-hidden bg-[#121110] lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:ml-0">
-          <JewelArt
-            form="cuban-chain"
-            finish="gold"
-            tone="dark"
-            crop={[250, 600, 520, 650]}
-            rotate={-8}
-            title="Study of a gold Cuban link chain on black"
-            className="absolute inset-0 scale-[1.02]"
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-obsidian text-ivory">
+      <div className="relative lg:h-[calc(100svh-var(--header-h)-2rem)] lg:min-h-[620px] lg:max-h-[960px]">
+        {/* Portrait — full-bleed on mobile, right 64% on desktop */}
+        <div className="clip-in relative aspect-[4/5] max-h-[74svh] w-full lg:absolute lg:inset-y-0 lg:right-0 lg:aspect-auto lg:max-h-none lg:w-[64%]">
+          <Photo
+            id="editorial-bw-chain-shadow-portrait"
+            sizes="(min-width:1024px) 64vw, 100vw"
+            priority
+            position="60% 82%"
+            className="absolute inset-0"
+            alt="Low-key black-and-white portrait of a man in profile wearing a silver chain"
           />
-          <p className="eyebrow fade-in absolute top-4 right-4 hidden text-[0.625rem] text-champagne/80 [animation-delay:1.1s] lg:top-6 lg:block lg:right-6">
-            Study Nº 01
-          </p>
-          <p className="eyebrow fade-in absolute bottom-6 right-6 hidden text-[0.625rem] text-champagne/80 [animation-delay:1.3s] lg:block">
-            Cuban link — gold
-          </p>
+          {/* fade the portrait into the black field on desktop */}
+          <div aria-hidden className="absolute inset-y-0 left-0 hidden w-1/3 bg-gradient-to-r from-obsidian to-transparent lg:block" />
         </div>
 
-        {/* Headline: inside the image on mobile, left column on desktop */}
+        {/* Headline */}
         <h1
           id="hero-title"
-          className={[
-            "display relative z-10 col-start-1 row-start-1 self-end pb-5 pl-[calc(var(--gutter)+1rem)] pr-4 uppercase text-ivory",
-            "text-[clamp(2.4rem,12.2vw,4.6rem)] leading-[0.9]",
-            "lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:pb-8 lg:pl-0 lg:pr-0 lg:text-obsidian",
-            "lg:text-[clamp(5rem,8.1vw,9.5rem)]",
-          ].join(" ")}
+          className="display absolute top-5 left-[var(--gutter)] z-10 text-[11.2vw] leading-[0.84] tracking-[-0.045em] lg:top-[11%] lg:text-[7.6vw]"
         >
-          <span className="mask-line">
-            <span className="[animation-delay:0.25s]">
-              Wear <em className="font-serif lowercase italic">your</em>
-            </span>
-          </span>
-          <span className="mask-line">
-            <span className="[animation-delay:0.4s]">Distinction.</span>
-          </span>
+          <span className="mask-line"><span>Not made</span></span>
+          <span className="mask-line"><span style={{ animationDelay: "0.12s" }}>to blend</span></span>
+          <span className="mask-line"><span style={{ animationDelay: "0.24s" }}>in.</span></span>
         </h1>
 
-        {/* Desktop-only detail study, overlapping the seam */}
-        <div
-          aria-hidden="true"
-          className="clip-in relative hidden overflow-hidden bg-[#121110] [animation-delay:0.35s] lg:col-span-2 lg:col-start-6 lg:row-start-1 lg:mt-10 lg:aspect-[3/4] lg:h-[min(24vh,260px)] lg:self-start lg:justify-self-end [@media(min-width:1024px)_and_(min-height:820px)]:block"
-        >
-          <JewelArt form="pendant-cross" finish="gold" tone="dark" crop={[290, 650, 420, 560]} rotate={-6} className="absolute inset-0" />
-        </div>
-
-        {/* Desktop-only top-left index */}
-        <div className="fade-in hidden [animation-delay:0.8s] lg:col-span-4 lg:col-start-1 lg:row-start-1 lg:block lg:self-start lg:pt-10">
-          <p className="eyebrow text-stone">Chains · Bracelets · Rings · Pendants</p>
-        </div>
-
-        {/* Copy + CTAs */}
-        <div className="fade-in col-start-1 row-start-2 px-[var(--gutter)] pt-5 pb-6 [animation-delay:0.6s] lg:col-span-6 lg:col-start-1 lg:row-start-2 lg:px-0 lg:pt-0 lg:pb-12">
-          <div className="lg:flex lg:items-end lg:justify-between lg:gap-10">
-            <p className="max-w-[30ch] text-[0.95rem] leading-snug text-graphite lg:text-[1.05rem]">
-              Statement pieces for those who define their own style.
+        {/* Mobile-only lower band / desktop overlay content */}
+        <div className="relative z-10 gutter pt-6 pb-8 lg:absolute lg:inset-x-0 lg:bottom-0 lg:flex lg:items-end lg:justify-between lg:pb-10">
+          <div className="fade-in [animation-delay:0.5s] lg:max-w-[34rem]">
+            <p className="max-w-[30rem] text-[0.95rem] leading-relaxed text-ivory/75">
+              Statement chains, bracelets, rings and pendants — made to be noticed. Shipping all over Pakistan.
             </p>
+            <div className="mt-6 grid grid-cols-2 gap-2 sm:flex">
+              <Link
+                href="/shop"
+                className="eyebrow inline-flex min-h-12 items-center justify-center gap-3 bg-ivory px-6 text-obsidian transition-colors hover:bg-accent hover:text-ivory"
+              >
+                Shop all <IconArrow size={16} />
+              </Link>
+              <Link
+                href="/new-arrivals"
+                className="eyebrow inline-flex min-h-12 items-center justify-center border border-ivory/60 px-6 transition-colors hover:border-ivory hover:bg-ivory hover:text-obsidian"
+              >
+                New in
+              </Link>
+            </div>
           </div>
-          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:mt-7 lg:flex lg:gap-3">
-            <Link
-              href="/collections"
-              className="eyebrow inline-flex min-h-12 items-center justify-center bg-obsidian px-5 text-ivory transition-colors hover:bg-graphite lg:px-8"
-            >
-              Explore Collections
-            </Link>
-            <Link
-              href="/new-arrivals"
-              className="eyebrow inline-flex min-h-12 items-center justify-center border border-obsidian px-5 transition-colors hover:bg-obsidian hover:text-ivory lg:px-8"
-            >
-              Shop New Arrivals
-            </Link>
-          </div>
+
+          {/* N° 01 — genuine Diamentory piece */}
+          <Link
+            href="/shop/bracelets"
+            className="group fade-in mt-8 flex items-end gap-4 [animation-delay:0.8s] lg:mt-0"
+          >
+            <Photo
+              id="brand-iced-cuban-bracelet-fist"
+              mono
+              sizes="(min-width:1024px) 9rem, 6.5rem"
+              position="50% 45%"
+              className="aspect-[3/4] w-[6.5rem] shrink-0 ring-1 ring-ivory/15 lg:w-36"
+              alt="Diamentory iced Cuban bracelet worn on a raised fist"
+            />
+            <span className="pb-1">
+              <span className="tag">N° 01</span>
+              <span className="mt-2 block text-sm font-semibold">Iced Cuban bracelet</span>
+              <span className="mt-1 flex items-center gap-2 text-xs text-ivory/60 transition-colors group-hover:text-ivory">
+                Shop bracelets <IconArrow size={14} />
+              </span>
+            </span>
+          </Link>
         </div>
       </div>
     </section>

@@ -14,8 +14,8 @@ export async function SiteFooter() {
       <div className="gutter mx-auto max-w-[1800px] pt-16 pb-10 lg:pt-24">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <p className="font-serif text-[clamp(2.5rem,7vw,5rem)] leading-[0.95]">
-              Defined <em>by you.</em>
+            <p className="max-w-xs text-[0.95rem] leading-relaxed text-ivory/70">
+              Statement chains, bracelets, rings and pendants. Shipping all over Pakistan.
             </p>
             <a
               href={SITE.instagram}
@@ -44,7 +44,7 @@ export async function SiteFooter() {
 
         <p
           aria-hidden="true"
-          className="wordmark mt-20 select-none text-center text-[clamp(1.6rem,8.6vw,10rem)] leading-none tracking-[0.2em] text-ivory/90"
+          className="wordmark mt-20 select-none whitespace-nowrap text-center text-[8.6vw] leading-none tracking-[-0.03em] text-ivory"
         >
           Diamentory
         </p>

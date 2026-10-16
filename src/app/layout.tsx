@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Inter_Tight } from "next/font/google";
+import { Archivo, Manrope } from "next/font/google";
 import { SITE } from "@/content/site";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -8,16 +8,18 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { FixtureNotice } from "@/components/layout/FixtureNotice";
 import "./globals.css";
 
-const bodoni = Bodoni_Moda({
+// Display: Archivo with the width axis, used at 125% (expanded) for the brand voice.
+const archivo = Archivo({
   subsets: ["latin"],
-  variable: "--font-bodoni",
-  style: ["normal", "italic"],
+  axes: ["wdth"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const interTight = Inter_Tight({
+// Interface, product information and checkout.
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter-tight",
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -38,7 +40,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#101010",
+  themeColor: "#080808",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -46,7 +48,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-PK" className={`${bodoni.variable} ${interTight.variable}`}>
+    <html lang="en-PK" className={`${archivo.variable} ${manrope.variable}`}>
       <body className="min-h-dvh">
         <a
           href="#main"

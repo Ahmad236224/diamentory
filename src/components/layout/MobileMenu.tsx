@@ -9,7 +9,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
   return (
     <Dialog open={open} onClose={onClose} side="left" label="Menu" tone="dark" hideTitle>
       <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between gutter">
-        <span className="wordmark text-[0.95rem]">Diamentory</span>
+        <span className="wordmark text-[1.05rem]">Diamentory</span>
         <button type="button" onClick={onClose} className="-mr-3 grid size-11 place-items-center" aria-label="Close menu">
           <IconClose size={22} />
         </button>
@@ -20,13 +20,13 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
         <p className="eyebrow mt-6 text-champagne">Shop</p>
         <ul className="stagger mt-3 border-t border-ivory/10">
           <li className="border-b border-ivory/10">
-            <Link href="/shop" className="flex min-h-14 items-center justify-between py-3 font-serif text-[2rem] leading-none">
+            <Link href="/shop" className="flex min-h-14 items-center justify-between py-3 font-serif text-[clamp(1.6rem,8vw,2.1rem)] uppercase leading-none">
               Shop All <IconArrow className="text-champagne" />
             </Link>
           </li>
           {NAV_PRIMARY.map((n) => (
             <li key={n.href} className="border-b border-ivory/10">
-              <Link href={n.href} className="flex min-h-14 items-center justify-between py-3 font-serif text-[2rem] leading-none">
+              <Link href={n.href} className="flex min-h-14 items-center justify-between py-3 font-serif text-[clamp(1.6rem,8vw,2.1rem)] uppercase leading-none">
                 {n.label} <IconArrow className="text-champagne" />
               </Link>
             </li>

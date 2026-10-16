@@ -4,15 +4,18 @@
    DIAMENTORY design tokens — single source of truth
    ─────────────────────────────────────────────── */
 :root {
-  --obsidian: #101010;
-  --graphite: #33312f;
-  --champagne: #d2c6b5;
-  --ivory: #f2efe9;
-  --stone: #8a847b; /* muted text on ivory, 4.6:1 */
-  --line: #d9d3c9;
-  --line-dark: #2a2826;
-  --error: #9b2c2c;
-  --success: #2f5d46;
+  /* Black & white dominant. Token names kept from v1 for compatibility. */
+  --obsidian: #080808; /* pure black */
+  --graphite: #202020; /* deep charcoal */
+  --champagne: #a8a8a8; /* cool grey — labels on black */
+  --ivory: #ffffff; /* editorial white */
+  --paper: #f6f6f4; /* soft off-white surfaces */
+  --stone: #6b6b6b; /* muted text on white, 5.3:1 */
+  --line: #e4e4e2;
+  --line-dark: #262626;
+  --accent: #2335ff; /* electric blue — used sparingly */
+  --error: #c4141c;
+  --success: #1d6b3f;
 
   --gutter: clamp(1rem, 4vw, 3.5rem);
   --header-h: 64px;
@@ -31,14 +34,17 @@
   --color-graphite: var(--graphite);
   --color-champagne: var(--champagne);
   --color-ivory: var(--ivory);
+  --color-paper: var(--paper);
+  --color-accent: var(--accent);
   --color-stone: var(--stone);
   --color-line: var(--line);
   --color-line-dark: var(--line-dark);
   --color-error: var(--error);
   --color-success: var(--success);
 
-  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-bodoni), "Didot", "Bodoni 72", Georgia, serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  /* `font-serif` is the display face (kept name from v1): Archivo Expanded */
+  --font-serif: var(--font-display), "Arial Black", ui-sans-serif, sans-serif;
 
   --breakpoint-xs: 23rem;
 }
@@ -52,7 +58,6 @@ body {
   background: var(--ivory);
   color: var(--obsidian);
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
@@ -65,7 +70,7 @@ body {
 
 @layer base {
   :focus-visible {
-    outline: 2px solid currentColor;
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
   /* keep focused/anchored targets clear of the sticky header */
@@ -86,23 +91,49 @@ body {
 /* ── Typography primitives ── */
 .eyebrow {
   font-size: 0.6875rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
 }
 
+/* Display face: Archivo at full expanded width. Applied wherever v1 used font-serif. */
+.font-serif,
 .display {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  line-height: 0.92;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+}
+.font-serif em,
+.display em {
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+.display {
+  text-transform: uppercase;
 }
 
 .wordmark {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  letter-spacing: 0.34em;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
+}
+
+/* Small accent index tag, e.g. "N° 01" */
+.tag {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.2em 0.45em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
 }
 
 .prose-legal h2 {
@@ -232,7 +263,7 @@ body {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #e9e5de 0%, #f4f1ec 50%, #e9e5de 100%);
+  background: linear-gradient(90deg, #ececeb 0%, #f7f7f6 50%, #ececeb 100%);
   background-size: 200% 100%;
   animation: shimmer 1.6s linear infinite;
 }

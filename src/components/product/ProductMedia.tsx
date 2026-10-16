@@ -32,7 +32,7 @@ export function ProductMedia({
       className={clsx(
         // `relative` would override a caller's `absolute` (same specificity, later in the cascade)
         !/(^|\s)(absolute|fixed)(\s|$)/.test(className ?? "") && "relative",
-        "overflow-hidden bg-[#e9e4dc]",
+        "overflow-hidden bg-[#ececeb]",
         className,
       )}
     >

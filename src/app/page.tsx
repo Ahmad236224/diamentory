@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
 import { SITE } from "@/content/site";
 import { Hero } from "@/components/home/Hero";
-import { CategoryEditorial } from "@/components/home/CategoryEditorial";
-import { SignatureSelection } from "@/components/home/SignatureSelection";
-import { StatementEditorial } from "@/components/home/StatementEditorial";
-import { FinishExplorer } from "@/components/home/FinishExplorer";
-import { NewArrivals } from "@/components/home/NewArrivals";
-import { BrandStory } from "@/components/home/BrandStory";
-import { StyledMoments } from "@/components/home/StyledMoments";
-import { FinalStatement } from "@/components/home/FinalStatement";
+import { CubanSection } from "@/components/home/CubanSection";
+import { TennisSection } from "@/components/home/TennisSection";
+import { BraceletsSection } from "@/components/home/BraceletsSection";
+import { RingsSection } from "@/components/home/RingsSection";
+import { PendantsSection } from "@/components/home/PendantsSection";
+import { SetsSection } from "@/components/home/SetsSection";
+import { TheEdit } from "@/components/home/TheEdit";
+import { BrandStatement } from "@/components/home/BrandStatement";
 
 export const metadata: Metadata = {
-  title: { absolute: "DIAMENTORY — Wear Your Distinction" },
+  title: { absolute: "DIAMENTORY — Not Made to Blend In" },
   description: SITE.description,
   alternates: { canonical: "/" },
   openGraph: {
-    title: "DIAMENTORY — Wear Your Distinction",
-    description: "Statement pieces for those who define their own style.",
+    title: "DIAMENTORY — Not Made to Blend In",
+    description: "Statement chains, bracelets, rings and pendants. Shipping all over Pakistan.",
     url: "/",
   },
 };
@@ -25,14 +25,14 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <CategoryEditorial />
-      <SignatureSelection />
-      <StatementEditorial />
-      <FinishExplorer />
-      <NewArrivals />
-      <BrandStory />
-      <StyledMoments />
-      <FinalStatement />
+      <CubanSection />
+      <TennisSection />
+      <BraceletsSection />
+      <RingsSection />
+      <PendantsSection />
+      <SetsSection />
+      <TheEdit />
+      <BrandStatement />
     </>
   );
 }

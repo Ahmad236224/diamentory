@@ -21,9 +21,9 @@ const METAL: Record<Exclude<Finish, "two-tone">, string[]> = {
 };
 
 const BG: Record<Tone, { base: string; glow: string; shadow: string }> = {
-  ivory: { base: "#e9e4dc", glow: "#f7f4ef", shadow: "#8a7f70" },
-  stone: { base: "#d6cdbf", glow: "#e9e2d7", shadow: "#6d6255" },
-  dark: { base: "#121110", glow: "#2b2926", shadow: "#000000" },
+  ivory: { base: "#ececeb", glow: "#fafafa", shadow: "#6f6f6f" },
+  stone: { base: "#d9d9d7", glow: "#ececeb", shadow: "#5a5a5a" },
+  dark: { base: "#0c0c0c", glow: "#262626", shadow: "#000000" },
 };
 
 /* ── geometry helpers ── */

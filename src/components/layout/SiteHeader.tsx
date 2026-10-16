@@ -15,7 +15,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-obsidian/10 bg-ivory/92 backdrop-blur-md supports-[backdrop-filter]:bg-ivory/80">
+      <header className="sticky top-0 z-40 border-b border-obsidian/10 bg-ivory">
         <div className="gutter mx-auto grid h-[var(--header-h)] max-w-[1800px] grid-cols-[1fr_auto_1fr] items-center">
           {/* left */}
           <div className="flex items-center">
@@ -42,7 +42,7 @@ export function SiteHeader() {
           </div>
 
           {/* wordmark */}
-          <Link href="/" className="wordmark text-[0.95rem] sm:text-base lg:text-[1.15rem]" aria-label="Diamentory — home">
+          <Link href="/" className="wordmark text-[1.05rem] sm:text-[1.15rem] lg:text-[1.35rem]" aria-label="Diamentory — home">
             Diamentory
           </Link>
 
@@ -71,9 +71,11 @@ export function SiteHeader() {
               aria-haspopup="dialog"
               onClick={cart.open}
             >
-              <IconBag />
-              <span className="min-w-[1ch] text-xs tabular-nums" aria-hidden="true">
-                {cart.hydrated && cart.count > 0 ? cart.count : ""}
+              <IconBag className="lg:hidden" />
+              <span className="eyebrow hidden lg:inline" aria-hidden="true">Bag</span>
+              <span className="min-w-[1ch] text-xs font-semibold tabular-nums" aria-hidden="true">
+                {cart.hydrated && cart.count > 0 ? <span className="lg:hidden">{cart.count}</span> : ""}
+                <span className="hidden lg:inline">({cart.hydrated ? cart.count : 0})</span>
               </span>
             </button>
           </div>
