@@ -10,10 +10,11 @@ export default function Error({ error, retry }: { error: Error & { digest?: stri
   }, [error]);
 
   return (
-    <div className="gutter mx-auto max-w-[1800px] pt-14 pb-24 lg:pt-24 lg:pb-32">
-      <div className="max-w-3xl">
+    <div className="wrap pt-2 pb-[var(--section-y)]">
+      <div className="h-11" aria-hidden="true" />
+      <div className="mt-4 max-w-3xl lg:mt-8">
         <p className="eyebrow text-stone">Something went wrong</p>
-        <h1 className="display mt-6 text-[clamp(2.9rem,12vw,7rem)]">
+        <h1 className="t-h1 mt-4">
           A small <em>interruption.</em>
         </h1>
         <p className="mt-7 max-w-[42ch] text-graphite">
@@ -24,11 +25,11 @@ export default function Error({ error, retry }: { error: Error & { digest?: stri
           <button
             type="button"
             onClick={() => retry()}
-            className="eyebrow inline-flex min-h-12 items-center justify-center gap-3 bg-obsidian px-7 text-ivory"
+            className="btn btn-dark"
           >
             Try again
           </button>
-          <Link href="/" className="eyebrow inline-flex min-h-12 items-center justify-center gap-3 border border-obsidian px-7">
+          <Link href="/" className="btn btn-outline">
             Home <IconArrow size={16} />
           </Link>
         </div>

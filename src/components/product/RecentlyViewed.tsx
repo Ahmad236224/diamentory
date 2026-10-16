@@ -37,17 +37,19 @@ export function RecentlyViewed({ current }: { current: string }) {
   if (!items.length) return null;
 
   return (
-    <section aria-labelledby="recent-h" className="gutter mx-auto max-w-[1800px] border-t border-obsidian/10 py-16 lg:py-24">
-      <h2 id="recent-h" className="eyebrow text-stone">
-        Recently viewed
-      </h2>
-      <ul className="no-scrollbar -mx-[var(--gutter)] mt-8 flex snap-x snap-mandatory scroll-px-[var(--gutter)] gap-3 overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:px-0">
-        {items.map((p) => (
-          <li key={p.slug} className="w-[44vw] shrink-0 snap-start sm:w-[30vw] lg:w-auto">
-            <ProductCard product={p} sizes="(min-width:1024px) 22vw, 44vw" />
-          </li>
-        ))}
-      </ul>
+    <section aria-labelledby="recent-h" className="border-t border-obsidian/10">
+      <div className="wrap section-sm">
+        <h2 id="recent-h" className="eyebrow text-stone">
+          Recently viewed
+        </h2>
+        <ul className="product-grid reveal-stagger mt-8">
+          {items.map((p, i) => (
+            <li key={p.slug} className={i === 3 ? "md:max-lg:hidden" : undefined}>
+              <ProductCard product={p} sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw" />
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

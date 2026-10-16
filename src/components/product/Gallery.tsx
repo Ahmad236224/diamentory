@@ -4,17 +4,20 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import type { Finish, Product } from "@/lib/catalog/types";
 import { IconExpand } from "@/components/ui/icons";
-import { ProductMedia } from "./ProductMedia";
+import { ProductMedia, photosFor } from "./ProductMedia";
 import { ImageViewer } from "./ImageViewer";
 
-export const VIEWS = [0, 1, 2, 3] as const;
-export const VIEW_LABEL = ["Front", "Detail", "Angle", "On dark"];
-
 /**
- * Mobile: full-bleed scroll-snap carousel with count + dots.
- * Desktop: editorial stacked grid. Any image opens the zoom viewer.
+ * Real photography only — the photos for the selected finish (`photosFor`).
+ * Phone: full-bleed scroll-snap carousel (count + dots only when there is more than one photo).
+ * Tablet/desktop: 2-up native 9:16 frames (each ≤ ~450 CSS px, so 768px studio shots are never upscaled),
+ * or a single 4:5 frame when the finish has one photo. Any image opens the zoom viewer.
+ * Remount per finish (`key`) so switching finish resets to the first photo.
  */
 export function Gallery({ product, finish }: { product: Product; finish: Finish }) {
+  const photos = photosFor(product, finish);
+  const n = Math.max(1, photos.length);
+  const single = n === 1;
   const [index, setIndex] = useState(0);
   const [viewer, setViewer] = useState<number | null>(null);
   const track = useRef<HTMLUListElement>(null);
@@ -25,11 +28,12 @@ export function Gallery({ product, finish }: { product: Product; finish: Finish 
     el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
   };
 
-  const open = (i: number) => setViewer(i);
-
   return (
-    <div aria-roledescription="carousel" aria-label={`${product.name} images`}>
-      {/* One list: scroll-snap carousel below lg, editorial grid from lg (no duplicate SVG ids). */}
+    <div
+      aria-roledescription={single ? undefined : "carousel"}
+      aria-label={`${product.name} images`}
+      className="fade-in"
+    >
       <div className="relative">
         <ul
           ref={track}
@@ -38,74 +42,81 @@ export function Gallery({ product, finish }: { product: Product; finish: Finish 
             const i = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
             if (i !== index) setIndex(i);
           }}
-          className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain lg:grid lg:grid-cols-2 lg:gap-2 lg:overflow-visible"
-        >
-          {VIEWS.map((v) => (
-            <li
-              key={v}
-              className={clsx("w-full shrink-0 snap-center snap-always lg:w-auto", (v === 0 || v === 3) && "lg:col-span-2")}
-              aria-roledescription="slide"
-              aria-label={`${v + 1} of ${VIEWS.length}: ${VIEW_LABEL[v]}`}
-            >
-              <button
-                type="button"
-                onClick={() => open(v)}
-                className={clsx(
-                  "group relative block aspect-[4/5] w-full overflow-hidden sm:aspect-[5/4] lg:cursor-zoom-in",
-                  v === 0 ? "lg:aspect-[5/5.4]" : v === 3 ? "lg:aspect-[16/10]" : "lg:aspect-[4/5]",
-                )}
-                aria-label={`Enlarge image ${v + 1}: ${VIEW_LABEL[v]}`}
-              >
-                <ProductMedia
-                  product={product}
-                  finish={finish}
-                  view={v}
-                  priority={v === 0}
-                  sizes="(min-width:1024px) 55vw, 100vw"
-                  className="absolute inset-0 transition-transform duration-[1.4s] ease-[var(--ease-out)] lg:group-hover:scale-[1.03]"
-                />
-                <span
-                  aria-hidden="true"
-                  className={clsx(
-                    "absolute right-4 bottom-4 hidden size-10 place-items-center opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 lg:grid",
-                    v === 3 ? "bg-obsidian/60 text-ivory" : "bg-ivory/85 text-obsidian",
-                  )}
-                >
-                  <IconExpand size={18} />
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-        <p
           className={clsx(
-            "eyebrow pointer-events-none absolute top-4 right-4 px-2 py-1 tabular-nums tracking-[0.18em] lg:hidden",
-            index === 3 ? "text-champagne" : "bg-ivory/80 text-obsidian",
+            "no-scrollbar flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain md:grid md:snap-none md:overflow-visible",
+            single ? "md:grid-cols-1" : "md:grid-cols-2 md:gap-[var(--grid-gap)]",
           )}
-          aria-live="polite"
         >
-          {index + 1} / {VIEWS.length}
-        </p>
-        <div className="absolute inset-x-0 bottom-1 flex justify-center lg:hidden">
-          {VIEWS.map((v) => (
-            <button
-              key={v}
-              type="button"
-              onClick={() => goTo(v)}
-              aria-label={`Show image ${v + 1}`}
-              aria-current={index === v ? "true" : undefined}
-              className="grid size-11 place-items-center"
-            >
-              <span
+          {Array.from({ length: n }, (_, v) => {
+            const alt = photos[v]?.alt ?? product.name;
+            return (
+              <li
+                key={photos[v]?.src ?? v}
                 className={clsx(
-                  "block h-[3px] transition-all duration-500",
-                  index === v ? "w-6" : "w-3 opacity-40",
-                  index === 3 ? "bg-ivory" : "bg-obsidian",
+                  "w-full shrink-0 snap-center snap-always md:w-auto",
+                  // single portrait photo: keep it portrait and never taller than the screen (tablet + phone landscape)
+                  single && "md:max-lg:mx-auto md:max-lg:w-[min(100%,calc((100svh-var(--header-h))*0.8))] lg:max-w-[768px]",
                 )}
-              />
-            </button>
-          ))}
-        </div>
+                aria-roledescription={single ? undefined : "slide"}
+                aria-label={single ? undefined : `${v + 1} of ${n}`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setViewer(v)}
+                  className={clsx(
+                    "group relative block w-full overflow-hidden bg-paper lg:cursor-zoom-in",
+                    "aspect-[4/5]", !single && "md:aspect-[9/16]",
+                  )}
+                  aria-label={`Enlarge image${single ? "" : ` ${v + 1} of ${n}`}: ${alt}`}
+                >
+                  <ProductMedia
+                    product={product}
+                    finish={finish}
+                    view={v}
+                    priority={v === 0}
+                    sizes={single ? "(min-width:1024px) 46vw, (min-width:768px) 768px, 100vw" : "(min-width:1024px) 30vw, (min-width:768px) 48vw, 100vw"}
+                    className="absolute inset-0 transition-transform duration-[1.4s] ease-[var(--ease-out)] lg:group-hover:scale-[1.03]"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="absolute right-4 bottom-4 hidden size-10 place-items-center bg-ivory/85 text-obsidian opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 lg:grid"
+                  >
+                    <IconExpand size={18} />
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        {!single && (
+          <>
+            <p
+              className="eyebrow pointer-events-none absolute top-4 right-4 bg-ivory/80 px-2 py-1 text-obsidian tabular-nums md:hidden"
+              aria-live="polite"
+            >
+              {index + 1} / {n}
+            </p>
+            <div className="absolute inset-x-0 bottom-1 flex justify-center md:hidden">
+              {Array.from({ length: n }, (_, v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => goTo(v)}
+                  aria-label={`Show image ${v + 1}`}
+                  aria-current={index === v ? "true" : undefined}
+                  className="grid size-11 place-items-center"
+                >
+                  <span
+                    className={clsx(
+                      "block h-[3px] bg-obsidian transition-[width,opacity] duration-500",
+                      index === v ? "w-6" : "w-3 opacity-40",
+                    )}
+                  />
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <ImageViewer

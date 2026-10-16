@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Checkout } from "@/components/checkout/Checkout";
+import { PageHeader } from "@/components/catalog/CatalogHeader";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -17,9 +18,11 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <header className="gutter mx-auto max-w-[1800px] pt-10 pb-6 sm:pt-14 lg:pt-20 lg:pb-10">
-        <h1 className="display text-[clamp(2.75rem,11vw,6.5rem)]">Checkout</h1>
-      </header>
+      <PageHeader
+        crumbs={[{ href: "/cart", label: "Bag" }, { label: "Checkout" }]}
+        eyebrow="Guest checkout"
+        title="Checkout"
+      />
       <Checkout />
     </>
   );

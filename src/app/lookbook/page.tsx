@@ -1,105 +1,160 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { SITE } from "@/content/site";
-import { getProduct } from "@/lib/catalog";
-import { JewelArt } from "@/components/art/JewelArt";
-import { STUDIES } from "@/components/home/studies";
+import { getCategory, getProduct } from "@/lib/catalog";
+import { IconArrow } from "@/components/ui/icons";
+import { PageHeader } from "@/components/catalog/CatalogHeader";
 
 export const metadata: Metadata = {
   title: "Lookbook",
-  description: "Styled moments from Diamentory — still-life studies in gold, silver, black and two-tone, with links to shop each piece.",
+  description:
+    "Diamentory pieces as photographed in the studio and on our Instagram — rings, chains & lockets, and bracelets, with links to shop each piece.",
   alternates: { canonical: "/lookbook" },
   openGraph: { title: "Lookbook — DIAMENTORY", url: "/lookbook" },
 };
 
-/** Magazine-like placement per study (12-col on desktop, 12-col asymmetric on mobile). */
-const LAYOUT: { place: string; aspect: string }[] = [
-  { place: "col-span-12 lg:col-span-7", aspect: "aspect-[4/5] lg:aspect-[5/4]" },
-  { place: "col-span-8 col-start-5 lg:col-span-4 lg:col-start-9 lg:mt-40", aspect: "aspect-[3/4]" },
-  { place: "col-span-7 lg:col-span-4 lg:col-start-2 lg:-mt-24", aspect: "aspect-[4/5]" },
-  { place: "col-span-5 col-start-8 mt-24 lg:col-span-3 lg:col-start-7 lg:mt-12", aspect: "aspect-[3/4]" },
-  { place: "col-span-10 col-start-2 lg:col-span-5 lg:col-start-8 lg:mt-24", aspect: "aspect-square" },
-  { place: "col-span-6 lg:col-span-3 lg:col-start-1", aspect: "aspect-[3/5]" },
-  { place: "col-span-6 mt-20 lg:col-span-5 lg:col-start-5 lg:mt-32", aspect: "aspect-[5/4]" },
-  { place: "col-span-9 lg:col-span-3 lg:col-start-10 lg:-mt-12", aspect: "aspect-[3/4]" },
-  { place: "col-span-12 lg:col-span-8 lg:col-start-3 lg:mt-12", aspect: "aspect-[4/5] lg:aspect-[16/10]" },
+/** Frames: [product slug, image index]. Real photographs only, straight from the catalogue. */
+const LOOKS: [string, number][] = [
+  ["cuban-link-chain", 0],
+  ["onyx-square-locket", 0],
+  ["textured-band-ring", 0],
+  ["iced-cuban-bracelet", 1],
+  ["zulfiqar-pendant", 0],
+  ["textured-wrap-ring", 0],
+  ["onyx-square-locket", 2],
+  ["sword-wrap-ring", 0],
+  ["rope-chain", 0],
+];
+
+/**
+ * Magazine placement on a 12-col grid. Desktop frames span ≤ 5 columns (≈ 520px max), so the
+ * 768px studio frames are never upscaled; 9:16 frames sit in narrower columns.
+ */
+const LAYOUT: { place: string; aspect: string; sizes: string }[] = [
+  {
+    place: "col-span-12 sm:col-span-7 lg:col-span-5",
+    aspect: "ratio-portrait",
+    sizes: "(min-width:1024px) 34vw, (min-width:640px) 58vw, 100vw",
+  },
+  {
+    place: "col-span-8 col-start-5 sm:col-span-5 sm:col-start-8 lg:col-span-3 lg:col-start-8 lg:mt-40",
+    aspect: "ratio-tall",
+    sizes: "(min-width:1024px) 20vw, (min-width:640px) 40vw, 66vw",
+  },
+  {
+    place: "col-span-7 lg:col-span-4 lg:col-start-2",
+    aspect: "ratio-portrait",
+    sizes: "(min-width:1024px) 27vw, 58vw",
+  },
+  {
+    place: "col-span-5 mt-24 lg:col-span-3 lg:col-start-7 lg:mt-32",
+    aspect: "ratio-tall",
+    sizes: "(min-width:1024px) 20vw, 42vw",
+  },
+  {
+    place: "col-span-10 col-start-2 sm:col-span-6 sm:col-start-4 lg:col-span-4 lg:col-start-9",
+    aspect: "ratio-portrait",
+    sizes: "(min-width:1024px) 27vw, (min-width:640px) 50vw, 84vw",
+  },
+  {
+    place: "col-span-6 lg:col-span-3 lg:col-start-1",
+    aspect: "ratio-tall",
+    sizes: "(min-width:1024px) 20vw, 50vw",
+  },
+  {
+    place: "col-span-6 mt-20 lg:col-span-4 lg:col-start-5 lg:mt-32",
+    aspect: "ratio-portrait",
+    sizes: "(min-width:1024px) 27vw, 50vw",
+  },
+  {
+    place: "col-span-9 lg:col-span-4 lg:col-start-9 lg:mt-12",
+    aspect: "ratio-square",
+    sizes: "(min-width:1024px) 27vw, 75vw",
+  },
+  {
+    place: "col-span-12 sm:col-span-8 sm:col-start-3 lg:col-span-5 lg:col-start-4 lg:mt-12",
+    aspect: "ratio-portrait",
+    sizes: "(min-width:1024px) 34vw, (min-width:640px) 66vw, 100vw",
+  },
 ];
 
 export default function LookbookPage() {
+  const looks = LOOKS.flatMap(([slug, i]) => {
+    const product = getProduct(slug);
+    const img = product?.images[i] ?? product?.images[0];
+    return product && img ? [{ product, img }] : [];
+  });
+
   return (
-    <div className="mx-auto max-w-[1800px] px-[var(--gutter)] pt-14 pb-24 lg:pt-24 lg:pb-40">
-      <header className="grid grid-cols-12 gap-x-3 lg:gap-x-6">
-        <p className="eyebrow col-span-12 text-stone lg:col-span-3">Styled moments</p>
-        <h1 className="display col-span-12 mt-4 text-[clamp(3.25rem,16vw,12rem)] lg:col-span-9 lg:mt-0">
-          Look<em className="italic">book.</em>
-        </h1>
-        <p className="col-span-12 mt-6 max-w-[42ch] text-[0.95rem] leading-relaxed text-graphite lg:col-span-5 lg:col-start-4">
-          Still-life studies in finish, form and contrast. Each one is a starting point — shop the piece, then make it yours.
-        </p>
-        <p className="col-span-12 mt-3 text-[0.75rem] text-stone lg:col-span-5 lg:col-start-4">
-          Illustrated studies shown while photography is in production.
-        </p>
-      </header>
-
-      <ol className="mt-16 grid grid-cols-12 gap-x-3 gap-y-14 lg:mt-28 lg:gap-x-6 lg:gap-y-20">
-        {STUDIES.map((s, i) => {
-          const l = LAYOUT[i % LAYOUT.length];
-          const product = getProduct(s.product);
-          return (
-            <li key={s.id} id={s.id} className={clsx("reveal scroll-mt-[calc(var(--header-h)+1.5rem)]", l.place)}>
-              <figure>
-                <div className={clsx("relative overflow-hidden", l.aspect)}>
-                  <JewelArt
-                    form={s.form}
-                    finish={s.finish}
-                    tone={s.tone}
-                    crop={s.crop}
-                    rotate={s.rotate}
-                    title={`${s.title}: ${s.note}`}
-                    className="absolute inset-0"
-                  />
-                </div>
-                <figcaption className="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                  <span className="flex items-baseline gap-3">
-                    <span className="eyebrow text-stone tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="display text-[1.5rem] lg:text-[1.9rem]">{s.title}</span>
-                  </span>
-                  <span className="w-full text-[0.82rem] text-stone">{s.note}</span>
-                  {product && (
-                    <Link href={`/product/${product.slug}?finish=${s.finish}`} className="inline-flex min-h-11 items-center py-2 text-[0.82rem] font-medium">
+    <>
+      <PageHeader
+        eyebrow="Lookbook"
+        title="Look"
+        accent="book."
+        intro="Diamentory pieces as photographed in the studio and on our Instagram. Every frame links to the piece it shows."
+      />
+      <div className="wrap pb-[var(--section-y)]">
+        <ol className="grid-12 mt-4 gap-y-14 lg:mt-8 lg:gap-y-20">
+          {looks.map(({ product, img }, i) => {
+            const l = LAYOUT[i % LAYOUT.length];
+            const cat = getCategory(product.category);
+            const href = `/product/${product.slug}${img.finish ? `?finish=${img.finish}` : ""}`;
+            return (
+              <li key={`${product.slug}-${i}`} className={l.place}>
+                <figure>
+                  <Link href={href} className="group block" tabIndex={-1} aria-hidden="true">
+                    <div className={clsx("reveal-mask relative overflow-hidden bg-paper", l.aspect)}>
+                      <Image
+                        src={img.src}
+                        alt=""
+                        fill
+                        sizes={l.sizes}
+                        className="object-cover transition-transform duration-[1.2s] ease-[var(--ease-out)] group-hover:scale-[1.03]"
+                        style={{ objectPosition: img.focus ?? "50% 40%" }}
+                      />
+                    </div>
+                  </Link>
+                  <figcaption className="reveal mt-3">
+                    <p className="eyebrow flex flex-wrap gap-x-3 text-stone tabular-nums">
+                      <span>{String(i + 1).padStart(2, "0")}</span>
+                      <span>
+                        {cat?.shortName} — {product.subcategory}
+                      </span>
+                    </p>
+                    <p className="mt-2 text-[0.9375rem]">{img.alt}.</p>
+                    <Link
+                      href={href}
+                      className="mt-1 inline-flex min-h-11 items-center gap-2 text-[0.8125rem] font-semibold"
+                    >
                       <span className="link-line">Shop the {product.name}</span>
-                      <span aria-hidden="true" className="ml-2">→</span>
+                      <IconArrow size={14} />
                     </Link>
-                  )}
-                </figcaption>
-              </figure>
-            </li>
-          );
-        })}
-      </ol>
+                  </figcaption>
+                </figure>
+              </li>
+            );
+          })}
+        </ol>
 
-      <section aria-labelledby="lb-more" className="mt-24 border-t border-obsidian/10 pt-10 lg:mt-40 lg:flex lg:items-end lg:justify-between">
-        <h2 id="lb-more" className="display text-[clamp(2rem,8vw,4.5rem)]">
-          More on <em className="italic">Instagram.</em>
-        </h2>
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:gap-3 lg:mt-0">
-          <a
-            href={SITE.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="eyebrow inline-flex min-h-12 items-center justify-center bg-obsidian px-8 text-ivory transition-colors hover:bg-graphite"
-          >
-            {SITE.instagramHandle} <span className="sr-only">(opens in a new tab)</span>
-          </a>
-          <Link
-            href="/collections"
-            className="eyebrow inline-flex min-h-12 items-center justify-center border border-obsidian px-8 transition-colors hover:bg-obsidian hover:text-ivory"
-          >
-            Explore Collections
-          </Link>
-        </div>
-      </section>
-    </div>
+        <section
+          aria-labelledby="lb-more"
+          className="mt-[var(--section-y)] border-t border-obsidian/10 pt-10 lg:flex lg:items-end lg:justify-between"
+        >
+          <h2 id="lb-more" className="t-h2 reveal">
+            More on <em>Instagram.</em>
+          </h2>
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:gap-3 lg:mt-0">
+            <a href={SITE.instagram} target="_blank" rel="noopener noreferrer" className="btn btn-dark">
+              {SITE.instagramHandle} <span className="sr-only">(opens in a new tab)</span>
+            </a>
+            <Link href="/collections" className="btn btn-outline">
+              Explore collections
+            </Link>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }

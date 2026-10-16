@@ -23,22 +23,23 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   };
 }
 
-export default async function CategoryPage({
-  params,
-  searchParams,
-}: {
-  params: Params;
-  searchParams: Promise<SearchParams>;
-}) {
+/** Params are awaited inside <Suspense> (Partial Prefetching): known categories still prerender in full. */
+export default function CategoryPage({ params, searchParams }: { params: Params; searchParams: Promise<SearchParams> }) {
+  return (
+    <Suspense fallback={<ListingSkeleton />}>
+      <Category params={params} searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function Category({ params, searchParams }: { params: Params; searchParams: Promise<SearchParams> }) {
   const category = getCategory((await params).category);
   if (!category) notFound();
   const count = queryProducts({ category: category.slug }).length;
   return (
     <>
       <CategoryHeader category={category} count={count} />
-      <div className="pt-6 lg:pt-16">
-        <CategoryNav active={category.slug} />
-      </div>
+      <CategoryNav active={category.slug} />
       <Suspense fallback={<ListingSkeleton />}>
         <Listing config={{ basePath: `/shop/${category.slug}`, category: category.slug }} searchParams={searchParams} />
       </Suspense>

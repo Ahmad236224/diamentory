@@ -1,0 +1,16 @@
+import { chromium, devices } from "@playwright/test";
+const b = await chromium.launch();
+const ctx = await b.newContext({ ...devices["iPhone 13"] });
+await ctx.addInitScript(() => localStorage.setItem("diamentory.cart.v1", JSON.stringify([{ slug: "onyx-square-locket", variantId: "onyx-square-locket--gold", qty: 1, priceAtAdd: 5200 }])));
+const p = await ctx.newPage();
+await p.goto("http://localhost:3217/checkout", { waitUntil: "networkidle" });
+await p.evaluate(() => { window.__log = []; const t0 = performance.now(); addEventListener("scroll", () => window.__log.push([Math.round(performance.now() - t0), Math.round(scrollY)]), { passive: true });
+  const o = Element.prototype.scrollIntoView; Element.prototype.scrollIntoView = function (...a) { window.__log.push(["scrollIntoView", this.id || this.tagName, JSON.stringify(a[0])]); return o.apply(this, a); };
+  const f = HTMLElement.prototype.focus; HTMLElement.prototype.focus = function (...a) { window.__log.push(["focus", this.id || this.tagName, JSON.stringify(a[0])]); return f.apply(this, a); }; });
+await p.getByRole("button", { name: /Confirm details/i }).last().tap();
+await p.waitForTimeout(3000);
+const log = await p.evaluate(() => window.__log);
+console.log(log.filter((x) => typeof x[0] === "string").map((x) => x.join(" ")).join("\n"));
+console.log("scroll samples:", log.filter((x) => typeof x[0] === "number").filter((_, i, a) => i % Math.ceil(a.length / 12) === 0 || i === a.length - 1).map((x) => x.join("@")).join(" "));
+console.log("final", await p.evaluate(() => ({ y: scrollY, active: document.activeElement.id, top: Math.round(document.activeElement.getBoundingClientRect().top), header: document.querySelector("header").getBoundingClientRect().toJSON() })));
+await b.close();

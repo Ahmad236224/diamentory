@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BUSINESS, NAV_SUPPORT, SITE } from "@/content/site";
-import { JewelArt } from "@/components/art/JewelArt";
+import Image from "next/image";
+import { getImage } from "@/content/images";
+import { PageHeader } from "@/components/catalog/CatalogHeader";
 import { Pending } from "@/components/content/Pending";
 import { InstagramButton } from "@/components/content/HelpBand";
 import { IconArrow } from "@/components/ui/icons";
@@ -23,6 +25,9 @@ function value(p: { value: string | null; pending: boolean }, href?: (v: string)
   );
 }
 
+/** Brand Instagram photograph (1440px square) — a mood frame, not a product listing. */
+const DM_PHOTO = getImage("brand-franco-chain-black-drape");
+
 export default function Page() {
   const rows = [
     {
@@ -42,26 +47,23 @@ export default function Page() {
 
   return (
     <>
-      <header className="gutter mx-auto max-w-[1800px] border-b border-obsidian/10 pt-12 pb-10 sm:pt-16 lg:pt-24 lg:pb-16">
-        <div className="grid gap-y-6 lg:grid-cols-12 lg:gap-x-8">
-          <p className="eyebrow text-stone lg:col-span-3 lg:pt-4">Client care</p>
-          <div className="lg:col-span-9">
-            <h1 className="display text-[clamp(2.9rem,12vw,8rem)]">
+      <div className="border-b border-obsidian/10">
+        <PageHeader
+          eyebrow="Client care"
+          title={
+            <>
               Talk to <em>us.</em>
-            </h1>
-            <p className="mt-7 max-w-[44ch] text-[1.0625rem] leading-relaxed text-graphite">
-              Questions about a piece, sizing, styling or an order — we&rsquo;re here. Instagram is the quickest way to
-              reach Diamentory today.
-            </p>
-          </div>
-        </div>
-      </header>
+            </>
+          }
+          intro="Questions about a piece, sizing, styling or an order — we’re here. Instagram is the quickest way to reach Diamentory today."
+        />
+      </div>
 
       <section aria-labelledby="dm-h" className="bg-obsidian text-ivory">
-        <div className="mx-auto grid max-w-[1800px] lg:grid-cols-12">
-          <div className="gutter flex flex-col justify-center py-14 lg:col-span-6 lg:py-24">
+        <div className="mx-auto grid max-w-[calc(var(--container)+2*var(--gutter))] grid-cols-12 lg:gap-x-[var(--grid-gap)] lg:px-[var(--gutter)]">
+          <div className="col-span-12 flex flex-col justify-center px-[var(--gutter)] py-[var(--section-y-sm)] lg:col-span-6 lg:px-0">
             <p className="eyebrow text-champagne">Direct message</p>
-            <h2 id="dm-h" className="display mt-5 text-[clamp(2.4rem,8vw,5rem)]">
+            <h2 id="dm-h" className="t-h2 mt-5 normal-case">
               {SITE.instagramHandle}
             </h2>
             <p className="mt-5 max-w-[38ch] text-ivory/70">
@@ -71,14 +73,21 @@ export default function Page() {
               <InstagramButton label="Message on Instagram" tone="light" />
             </div>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden lg:col-span-6 lg:aspect-auto lg:min-h-[32rem]">
-            <JewelArt form="cuban-chain" finish="gold" tone="dark" view={3} crop={[240, 300, 560, 520]} className="absolute inset-0" />
+          <div className="reveal-mask relative col-span-12 aspect-square overflow-hidden lg:col-span-6 lg:my-[var(--section-y-sm)]">
+            <Image
+              src={DM_PHOTO.src}
+              alt={DM_PHOTO.alt}
+              fill
+              sizes="(min-width:1024px) 50vw, 100vw"
+              // the frame carries an old watermark top-right: anchor bottom-left and crop it away
+              className="origin-bottom-left scale-[1.22] object-cover object-left-bottom"
+            />
           </div>
         </div>
       </section>
 
-      <div className="gutter mx-auto grid max-w-[1800px] gap-y-12 py-16 lg:grid-cols-12 lg:gap-x-8 lg:py-24">
-        <section aria-labelledby="details-h" className="lg:col-span-6 lg:col-start-4">
+      <div className="wrap section-sm grid-12 gap-y-12">
+        <section aria-labelledby="details-h" className="col-span-12 lg:col-span-6 lg:col-start-5">
           <h2 id="details-h" className="eyebrow mb-5 text-stone">
             Details
           </h2>
@@ -92,7 +101,7 @@ export default function Page() {
           </dl>
         </section>
 
-        <nav aria-labelledby="help-h" className="lg:col-span-3 lg:col-start-10">
+        <nav aria-labelledby="help-h" className="col-span-12 lg:col-span-3 lg:col-start-1 lg:row-start-1">
           <h2 id="help-h" className="eyebrow mb-5 text-stone">
             Helpful
           </h2>

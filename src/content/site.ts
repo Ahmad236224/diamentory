@@ -40,12 +40,11 @@ export const PAKISTAN_PROVINCES = [
   "Azad Jammu & Kashmir",
 ];
 
+/** The three top-level categories — same order everywhere. */
 export const NAV_PRIMARY = [
-  { href: "/shop/chains", label: "Chains" },
-  { href: "/shop/bracelets", label: "Bracelets" },
   { href: "/shop/rings", label: "Rings" },
-  { href: "/shop/pendants", label: "Pendants" },
-  { href: "/shop/sets", label: "Sets & Stacks" },
+  { href: "/shop/chains", label: "Chain & Lockets" },
+  { href: "/shop/bracelets", label: "Bracelets" },
 ];
 
 export const NAV_SECONDARY = [

@@ -9,7 +9,16 @@ import { QtyStepper } from "@/components/ui/QtyStepper";
 
 const FINISH_LABEL: Record<string, string> = { gold: "Gold", silver: "Silver", black: "Black", "two-tone": "Two-Tone" };
 
-export function CartLines({ compact, onNavigate }: { compact?: boolean; onNavigate?: () => void }) {
+export function CartLines({
+  compact,
+  onNavigate,
+  highlight,
+}: {
+  compact?: boolean;
+  onNavigate?: () => void;
+  /** Variant id of a just-added line: slides in with a brief highlight. */
+  highlight?: string | null;
+}) {
   const cart = useCart();
   return (
     <ul className="divide-y divide-obsidian/10">
@@ -17,14 +26,14 @@ export function CartLines({ compact, onNavigate }: { compact?: boolean; onNaviga
         const p = l.product;
         const v = l.variant;
         return (
-          <li key={l.variantId} className={clsx("flex gap-4", compact ? "py-5" : "py-6 sm:gap-6")}>
-            <div className={clsx("shrink-0", compact ? "w-24" : "w-28 sm:w-36")}>
+          <li key={l.variantId} className={clsx("flex gap-4", compact ? "py-5" : "py-6 sm:gap-6", highlight === l.variantId && "line-new")}>
+            <div className={clsx("shrink-0", compact ? "w-20 xs:w-24" : "w-24 xs:w-28 sm:w-36")}>
               {p ? (
                 <Link href={`/product/${p.slug}`} onClick={onNavigate} tabIndex={-1} aria-hidden="true">
-                  <ProductMedia product={p} finish={v?.finish} className="aspect-[4/5]" sizes="150px" />
+                  <ProductMedia product={p} finish={v?.finish} className="ratio-card" sizes="150px" />
                 </Link>
               ) : (
-                <div className="aspect-[4/5] bg-line" />
+                <div className="ratio-card bg-line" />
               )}
             </div>
             <div className="flex min-w-0 flex-1 flex-col">
@@ -60,7 +69,7 @@ export function CartLines({ compact, onNavigate }: { compact?: boolean; onNaviga
                 </p>
               )}
 
-              <div className="mt-auto flex items-center justify-between gap-3 pt-3">
+              <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3">
                 {v && l.issue !== "sold-out" && l.issue !== "unavailable" ? (
                   <QtyStepper
                     value={l.qty}

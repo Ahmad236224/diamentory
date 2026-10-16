@@ -6,6 +6,7 @@ import { ListingFrame, PendingArea } from "./ListingFrame";
 import { LoadMore } from "./LoadMore";
 import {
   appliedCount,
+  CLEARED,
   listingHref,
   parseListingState,
   runListing,
@@ -14,8 +15,11 @@ import {
   type SearchParams,
 } from "./listingState";
 
-const GRID = "grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-4 md:grid-cols-3 lg:gap-x-6 lg:gap-y-16 xl:grid-cols-4";
-const SIZES = "(min-width: 1280px) 24vw, (min-width: 768px) 32vw, 48vw";
+/** Shared product grid: 2 / 3 / 4 columns, `--grid-gap` gutters (see globals.css "Shop & product pages"). */
+export const PRODUCT_GRID = "product-grid";
+export const GRID_SIZES = "(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw";
+const GRID = PRODUCT_GRID;
+const SIZES = GRID_SIZES;
 
 /** Server-rendered, URL-driven product listing. Must be rendered inside <Suspense>. */
 export async function Listing({
@@ -39,10 +43,11 @@ export async function Listing({
       {(results.length > 0 || appliedCount(state) > 0) && (
         <FilterBar config={config} state={state} total={results.length} />
       )}
-      <PendingArea className="border-t border-obsidian/10 gutter mx-auto max-w-[1800px] pt-8 pb-24 lg:pt-12 lg:pb-32">
+      <PendingArea className="wrap pt-8 pb-[var(--section-y)] lg:pt-10">
         {shown.length ? (
-          <>
-            <ul className={GRID}>
+          // keyed by the filter signature: a new result set fades in; "load more" (n) keeps the grid
+          <div key={listingHref(config, { ...state, n: PAGE_SIZE })} className="results-fade">
+            <ul className={`${GRID} reveal-stagger stagger-head`}>
               {shown.map((p, i) => (
                 <li key={p.slug}>
                   <ProductCard product={p} finish={cardFinish} sizes={SIZES} priority={i < 2} />
@@ -50,18 +55,18 @@ export async function Listing({
               ))}
             </ul>
             {results.length > PAGE_SIZE && <LoadMore href={more} shown={shown.length} total={results.length} />}
-          </>
+          </div>
         ) : (
           <Empty
             title={state.q && appliedCount(state) === 0 ? `Nothing found for “${state.q}”` : "Nothing matches these filters"}
             body={
               state.q && appliedCount(state) === 0
-                ? "Check the spelling, or try a broader word — a form like “chain”, “ring” or “cuff”, or a finish like “gold” or “black”."
-                : "Try removing a filter or two. Every piece comes in several finishes, so the right one may be a step away."
+                ? "Check the spelling, or try a broader word — a style like “cuban”, “locket” or “band”, or a finish like “gold” or “silver”."
+                : "Try removing a filter or two — the piece you are after may be one step away."
             }
             reset={
               appliedCount(state) > 0
-                ? { href: listingHref(config, state, { finishes: [], category: undefined, inStock: false }), label: "Clear filters" }
+                ? { href: listingHref(config, state, CLEARED), label: "Clear filters" }
                 : null
             }
           />
@@ -75,22 +80,15 @@ function Empty({ title, body, reset }: { title: string; body: string; reset: { h
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center py-12 text-center lg:py-20">
       <p className="eyebrow text-stone">No results</p>
-      <h2 className="mt-4 font-serif text-3xl leading-tight text-balance sm:text-4xl">{title}</h2>
+      <h2 className="t-h3 mt-4 text-balance">{title}</h2>
       <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-graphite">{body}</p>
       <div className="mt-8 flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
         {reset && (
-          <Link
-            href={reset.href}
-            scroll={false}
-            className="eyebrow inline-flex min-h-12 items-center justify-center bg-obsidian px-8 text-ivory"
-          >
+          <Link href={reset.href} scroll={false} className="btn btn-dark">
             {reset.label}
           </Link>
         )}
-        <Link
-          href="/shop"
-          className="eyebrow inline-flex min-h-12 items-center justify-center border border-obsidian px-8"
-        >
+        <Link href="/shop" className="btn btn-outline">
           Shop all
         </Link>
       </div>
@@ -101,7 +99,7 @@ function Empty({ title, body, reset }: { title: string; body: string; reset: { h
 
 function SearchPrompt() {
   return (
-    <div className="gutter mx-auto max-w-[1800px] border-t border-obsidian/10 pt-12 pb-24">
+    <div className="wrap border-t border-obsidian/10 pt-10 pb-[var(--section-y)]">
       <p className="text-[0.9375rem] text-graphite">Type a word above — a form, a finish or a name.</p>
       <CategoryLinks className="mt-10" align="start" />
     </div>
@@ -133,23 +131,23 @@ export function ListingSkeleton({ quickChips = true }: { quickChips?: boolean })
   return (
     <div aria-hidden="true">
       <div className="border-y border-obsidian/10">
-        <div className="gutter flex h-14 items-center justify-between lg:h-16">
+        <div className="wrap flex h-14 items-center justify-between lg:h-16">
           <div className="skeleton h-3 w-28" />
           <div className="skeleton h-3 w-16" />
         </div>
         {quickChips && (
-          <div className="gutter flex gap-2 overflow-hidden pb-3 lg:hidden">
+          <div className="wrap flex gap-2 overflow-hidden pb-3 lg:hidden">
             {Array.from({ length: 4 }, (_, i) => (
               <div key={i} className="skeleton h-11 w-24 shrink-0" />
             ))}
           </div>
         )}
       </div>
-      <div className="gutter mx-auto max-w-[1800px] pt-8 pb-24 lg:pt-12">
+      <div className="wrap pt-8 pb-[var(--section-y)] lg:pt-10">
         <div className={GRID}>
           {Array.from({ length: 8 }, (_, i) => (
             <div key={i}>
-              <div className="skeleton aspect-[4/5]" />
+              <div className="skeleton ratio-card" />
               <div className="skeleton mt-3 h-3 w-3/4" />
               <div className="skeleton mt-2 h-3 w-1/3" />
             </div>

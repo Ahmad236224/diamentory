@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Finish, Product } from "@/lib/catalog/types";
 import { Gallery } from "./Gallery";
+import { photosFor } from "./ProductMedia";
 import { PurchasePanel } from "./PurchasePanel";
 import { StickyBuyBar } from "./StickyBuyBar";
 import { useVariantSelection } from "./useVariantSelection";
@@ -32,16 +33,18 @@ export function ProductView({
 }) {
   const selection = useVariantSelection(product);
   const cta = useRef<HTMLDivElement>(null);
+  const single = photosFor(product, selection.finish).length <= 1;
   return (
-    <div className="mx-auto max-w-[1800px] lg:gutter lg:grid lg:grid-cols-12 lg:gap-x-12 xl:gap-x-20">
+    // phone: gallery full-bleed; tablet+: on the same .wrap edge as breadcrumbs and grids
+    <div className="mx-auto w-full max-w-[calc(var(--container)+2*var(--gutter))] md:px-[var(--gutter)] lg:grid lg:grid-cols-12 lg:gap-x-[var(--grid-gap)]">
       <Suspense fallback={null}>
         <FinishFromUrl selection={selection} />
       </Suspense>
-      <div className="lg:col-span-7">
-        <Gallery product={product} finish={selection.finish} />
+      <div className={single ? "lg:col-span-6" : "lg:col-span-6 xl:col-span-7"}>
+        <Gallery key={selection.finish} product={product} finish={selection.finish} />
       </div>
-      <div className="lg:col-span-5">
-        <div className="gutter pt-7 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:px-0 lg:pt-4">
+      <div className={single ? "lg:col-span-5 lg:col-start-8" : "lg:col-span-5 lg:col-start-8 xl:col-span-4 xl:col-start-9"}>
+        <div className="px-[var(--gutter)] pt-7 md:px-0 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:pt-0">
           {header}
           <div className="mt-6">
             <PurchasePanel product={product} selection={selection} ctaRef={cta} />

@@ -1,12 +1,14 @@
-import type { ArtForm, Finish } from "@/lib/catalog";
+import { FINISHES, queryProducts, type Finish } from "@/lib/catalog";
+import { photosFor } from "@/components/product/ProductMedia";
 
-/** Art direction for each finish collection. */
-export const FINISH_ART: Record<
-  Finish,
-  { form: ArtForm; tone: "ivory" | "stone" | "dark"; crop: [number, number, number, number]; rotate?: number }
-> = {
-  gold: { form: "cuban-chain", tone: "dark", crop: [100, 300, 800, 640], rotate: -10 },
-  silver: { form: "tennis-bracelet", tone: "stone", crop: [80, 240, 840, 670], rotate: 8 },
-  black: { form: "band-ring", tone: "dark", crop: [160, 200, 680, 545], rotate: -6 },
-  "two-tone": { form: "set", tone: "stone", crop: [40, 160, 920, 735], rotate: -4 },
-};
+/** Finishes that actually have pieces (an empty finish gets no index entry and its page 404s). */
+export function activeFinishes() {
+  return FINISHES.filter((f) => queryProducts({ finish: [f.slug] }).length > 0);
+}
+
+/** Real photos for a finish: the finish-specific frame of each matching piece, featured first. */
+export function finishPhotos(finish: Finish, n: number) {
+  return queryProducts({ finish: [finish] })
+    .slice(0, n)
+    .map((p) => ({ ...photosFor(p, finish)[0], href: `/product/${p.slug}?finish=${finish}` }));
+}

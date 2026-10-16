@@ -10,7 +10,7 @@ export function Pending({ children = DEFAULT, className }: { children?: React.Re
   return (
     <span
       className={clsx(
-        "pending-chip inline-flex items-center gap-1.5 border border-dashed border-obsidian/35 px-1.5 py-px align-baseline text-[0.8125em] leading-snug text-graphite",
+        "pending-chip inline-flex items-center gap-1.5 border border-dashed border-obsidian/35 px-1.5 py-px align-baseline text-[max(0.8125em,11px)] leading-snug text-graphite",
         className,
       )}
     >

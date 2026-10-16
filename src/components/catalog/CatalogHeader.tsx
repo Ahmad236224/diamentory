@@ -1,139 +1,153 @@
+import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { CATEGORIES, type ArtForm, type Category, type CategorySlug, type Finish } from "@/lib/catalog";
-import { JewelArt } from "@/components/art/JewelArt";
+import { CATEGORIES, getProduct, type Category, type CategorySlug, type ProductImage } from "@/lib/catalog";
 
-type Crop = [number, number, number, number];
-type Shot = { form?: ArtForm; finish: Finish; tone: "ivory" | "stone" | "dark"; crop: Crop; rotate?: number };
+/* ───────────────────────────────────────────────
+   Listing page headers. One layout for every listing (shop, categories,
+   collections, new arrivals, search): breadcrumbs → eyebrow → .t-h1 → intro,
+   with real photography on the right (desktop) / below (mobile), all on `.wrap`.
+   ─────────────────────────────────────────────── */
 
-/** Art direction per category: a hero macro study and a smaller counter-study. */
-const DIRECTION: Record<CategorySlug, { hero: Shot; inset: Shot; flip?: boolean }> = {
-  chains: {
-    hero: { finish: "gold", tone: "dark", crop: [120, 360, 760, 560], rotate: -8 },
-    inset: { finish: "silver", tone: "ivory", crop: [60, 120, 880, 1100] },
-  },
-  bracelets: {
-    hero: { finish: "silver", tone: "stone", crop: [80, 240, 840, 620], rotate: 10 },
-    inset: { finish: "black", tone: "dark", crop: [140, 280, 720, 900] },
-    flip: true,
-  },
-  rings: {
-    hero: { finish: "black", tone: "ivory", crop: [0, 120, 1000, 800], rotate: -6 },
-    inset: { form: "stone-ring", finish: "gold", tone: "dark", crop: [140, 160, 720, 900] },
-  },
-  pendants: {
-    hero: { finish: "gold", tone: "dark", crop: [220, 360, 560, 410], rotate: 4 },
-    inset: { form: "pendant-disc", finish: "silver", tone: "stone", crop: [160, 420, 680, 850] },
-    flip: true,
-  },
-  sets: {
-    hero: { finish: "two-tone", tone: "stone", crop: [40, 160, 920, 680], rotate: -4 },
-    inset: { form: "tennis-bracelet", finish: "gold", tone: "dark", crop: [100, 260, 800, 1000] },
-  },
+/** A product photo reference: [product slug, image index]. Resolved from the catalogue (single source). */
+export type PhotoRef = [slug: string, index: number, focus?: string];
+
+export function resolvePhotos(refs: PhotoRef[]): (ProductImage & { href: string })[] {
+  return refs.flatMap(([slug, i, focus]) => {
+    const p = getProduct(slug);
+    const img = p?.images[i] ?? p?.images[0];
+    // optional focus override: header frames are cropped wider than the product cards
+    return p && img ? [{ ...img, focus: focus ?? img.focus, href: `/product/${p.slug}` }] : [];
+  });
+}
+
+/** Real photography per category. Studio frames for rings/chains; Instagram frames for bracelets (no studio shots exist). */
+export const CATEGORY_PHOTOS: Record<CategorySlug, PhotoRef[]> = {
+  // second frames where a piece has one, so the header doesn't repeat the first cards of the grid
+  rings: [
+    ["textured-band-ring", 0],
+    ["sword-wrap-ring", 1],
+  ],
+  chains: [
+    ["onyx-square-locket", 1, "50% 60%"],
+    ["round-snake-chain", 1],
+  ],
+  bracelets: [
+    ["iced-cuban-bracelet", 1],
+    ["iced-link-bracelet", 0],
+  ],
 };
 
-export function CategoryHeader({ category, count }: { category: Category; count: number }) {
-  const d = DIRECTION[category.slug];
-  const index = CATEGORIES.findIndex((c) => c.slug === category.slug) + 1;
-  const [first, ...rest] = category.name.split(" ");
+/**
+ * 2–3 photos in a row. Frames never exceed ~390 CSS px wide on desktop, so 768px studio
+ * shots stay sharp (no upscaling). Each frame wipes in (`.reveal-mask`) and honours `focus`.
+ */
+export function HeaderPhotos({
+  photos,
+  priority,
+  linked = true,
+}: {
+  photos: (ProductImage & { href?: string })[];
+  priority?: boolean;
+  linked?: boolean;
+}) {
+  const cols = photos.length >= 3 ? "grid-cols-3" : "grid-cols-2";
   return (
-    <header className="mx-auto max-w-[1800px] lg:gutter lg:pt-10">
-      <div className={clsx("lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-10", d.flip && "lg:[&>*:first-child]:order-2")}>
-        <div className="relative lg:col-span-7">
-          <div className="clip-in relative aspect-[5/4] overflow-hidden lg:aspect-[16/11]">
-            <JewelArt
-              form={d.hero.form ?? category.art}
-              finish={d.hero.finish}
-              tone={d.hero.tone}
-              crop={d.hero.crop}
-              rotate={d.hero.rotate}
-              className="parallax-img absolute inset-0"
-            />
-            <p
-              className={clsx(
-                "eyebrow absolute bottom-4 left-4 lg:bottom-6 lg:left-6",
-                d.hero.tone === "dark" ? "text-champagne" : "bg-ivory/85 px-2 py-1 text-graphite",
-              )}
-              aria-hidden="true"
-            >
-              {String(index).padStart(2, "0")} — {category.shortName}
-            </p>
-          </div>
-          <div
-            className={clsx(
-              "absolute -bottom-10 hidden aspect-[4/5] w-[22%] overflow-hidden ring-8 ring-ivory sm:block lg:-bottom-12",
-              d.flip ? "left-6 lg:-left-6" : "right-6 lg:-right-6",
-            )}
-          >
-            <JewelArt
-              form={d.inset.form ?? category.art}
-              finish={d.inset.finish}
-              tone={d.inset.tone}
-              crop={d.inset.crop}
-              rotate={d.inset.rotate}
-              className="absolute inset-0"
+    <ul className={clsx("grid gap-[var(--grid-gap)]", cols)}>
+      {photos.map((img, i) => {
+        const frame = (
+          <div className="reveal-mask relative aspect-square overflow-hidden bg-paper sm:aspect-[4/5]" style={{ "--d": `${i * 120}ms` } as React.CSSProperties}>
+            <Image
+              src={img.src}
+              alt={linked ? "" : img.alt}
+              fill
+              priority={priority && i === 0}
+              sizes={photos.length >= 3 ? "(min-width:1024px) 13vw, 30vw" : "(min-width:1024px) 20vw, 46vw"}
+              className="object-cover transition-transform duration-[1.2s] ease-[var(--ease-out)] group-hover:scale-[1.03]"
+              style={{ objectPosition: img.focus ?? "50% 40%" }}
             />
           </div>
-        </div>
-        <div className="gutter pt-8 pb-10 sm:pt-16 lg:col-span-5 lg:px-0 lg:pt-0 lg:pb-2">
-          <p className="eyebrow text-stone">
-            Collection {String(index).padStart(2, "0")} / {String(CATEGORIES.length).padStart(2, "0")}
-          </p>
-          <h1 className="display mt-4 text-[3.25rem] sm:text-7xl xl:text-8xl">
-            {first}
-            {rest.length > 0 && (
-              <>
-                {" "}
-                <em className="italic">{rest.join(" ")}</em>
-              </>
+        );
+        return (
+          <li key={img.src}>
+            {linked && img.href ? (
+              <Link href={img.href} className="group block" aria-label={img.alt}>
+                {frame}
+              </Link>
+            ) : (
+              frame
             )}
-          </h1>
-          <p className="mt-6 font-serif text-xl italic text-graphite lg:text-2xl">{category.tagline}</p>
-          <p className="mt-3 max-w-md text-[0.9375rem] leading-relaxed text-graphite">{category.intro}</p>
-          <p className="eyebrow mt-6 text-stone tabular-nums">
-            {count} {count === 1 ? "piece" : "pieces"}
-          </p>
-        </div>
-      </div>
-    </header>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
+/** Shared page header (listings, client care, cart, checkout, 404): same edge, spacing and type on every page. */
 export function PageHeader({
   eyebrow,
   title,
   accent,
   intro,
-  art,
+  media,
   meta,
+  crumbs,
+  children,
 }: {
-  eyebrow: string;
-  title: string;
+  eyebrow: React.ReactNode;
+  title: React.ReactNode;
   accent?: string;
   intro?: React.ReactNode;
-  art?: React.ReactNode;
+  /** Photos (or other media) — right column on desktop, below the text on mobile. */
+  media?: React.ReactNode;
   meta?: React.ReactNode;
+  crumbs?: { href?: string; label: string }[];
+  /** Extra content under the intro (e.g. the search field). */
+  children?: React.ReactNode;
 }) {
   return (
-    <header className="gutter mx-auto max-w-[1800px] pt-10 pb-10 lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-10 lg:pt-16 lg:pb-14">
-      <div className="lg:col-span-7">
-        <p className="eyebrow text-stone">{eyebrow}</p>
-        <h1 className="display mt-4 text-[3.25rem] sm:text-7xl xl:text-[7.5rem]">
-          {title}
-          {accent && (
-            <>
-              {" "}
-              <em className="italic">{accent}</em>
-            </>
-          )}
-        </h1>
-      </div>
-      <div className="mt-6 lg:col-span-5 lg:mt-0">
-        {art}
-        {intro && <div className="max-w-md text-[0.9375rem] leading-relaxed text-graphite">{intro}</div>}
-        {meta && <div className="eyebrow mt-5 text-stone tabular-nums">{meta}</div>}
+    <header className="wrap pt-2 pb-8 lg:pt-4 lg:pb-12">
+      {crumbs ? <Breadcrumbs items={crumbs} /> : <div className="h-11" aria-hidden="true" />}
+      <div className="grid-12 mt-2 items-end gap-y-6 lg:mt-8">
+        <div className={clsx("reveal col-span-12", media && "lg:col-span-7")}>
+          <p className="eyebrow flex items-center gap-3 text-stone">{eyebrow}</p>
+          <h1 className="t-h1 mt-4 text-balance">
+            {title}
+            {accent && (
+              <>
+                {" "}
+                <em>{accent}</em>
+              </>
+            )}
+          </h1>
+          {intro && <div className="mt-5 max-w-[46ch] text-graphite lg:mt-6">{intro}</div>}
+          {children}
+          {/* the filter bar shows the live count on phones; keep the header short there */}
+          {meta && <p className="eyebrow mt-5 hidden text-stone tabular-nums lg:block">{meta}</p>}
+        </div>
+        {media && <div className="col-span-12 lg:col-span-5">{media}</div>}
       </div>
     </header>
+  );
+}
+
+export function CategoryHeader({ category, count }: { category: Category; count: number }) {
+  const index = CATEGORIES.findIndex((c) => c.slug === category.slug) + 1;
+  return (
+    <PageHeader
+      crumbs={[{ href: "/", label: "Home" }, { href: "/shop", label: "Shop" }, { label: category.name }]}
+      eyebrow={
+        <>
+          <span className="tag">N° {String(index).padStart(2, "0")}</span>
+          {category.tagline}
+        </>
+      }
+      title={category.name}
+      intro={category.intro}
+      meta={`${count} ${count === 1 ? "piece" : "pieces"}`}
+      media={<HeaderPhotos photos={resolvePhotos(CATEGORY_PHOTOS[category.slug])} priority />}
+    />
   );
 }
 
@@ -141,12 +155,12 @@ export function PageHeader({
 export function CategoryNav({ active }: { active?: CategorySlug | "all" | "new" }) {
   const items = [
     { href: "/shop", label: "Shop all", key: "all" },
-    { href: "/new-arrivals", label: "New", key: "new" },
     ...CATEGORIES.map((c) => ({ href: `/shop/${c.slug}`, label: c.shortName, key: c.slug })),
+    { href: "/new-arrivals", label: "New", key: "new" },
   ];
   return (
-    <nav aria-label="Shop categories" className="mx-auto max-w-[1800px]">
-      <ul className="no-scrollbar gutter flex gap-6 overflow-x-auto lg:gap-8">
+    <nav aria-label="Shop categories">
+      <ul className="wrap no-scrollbar flex gap-6 overflow-x-auto lg:gap-8">
         {items.map((it) => (
           <li key={it.key} className="shrink-0">
             <Link
@@ -170,7 +184,7 @@ export function CategoryNav({ active }: { active?: CategorySlug | "all" | "new" 
 export function Breadcrumbs({ items }: { items: { href?: string; label: string }[] }) {
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.75rem] text-stone">
+      <ol className="flex flex-wrap items-center gap-x-2 text-[0.75rem] text-stone">
         {items.map((it, i) => (
           <li key={i} className="flex items-center gap-2">
             {i > 0 && <span aria-hidden="true">/</span>}
@@ -179,7 +193,7 @@ export function Breadcrumbs({ items }: { items: { href?: string; label: string }
                 {it.label}
               </Link>
             ) : (
-              <span aria-current="page" className="text-obsidian">
+              <span aria-current="page" className="inline-flex min-h-11 items-center text-obsidian">
                 {it.label}
               </span>
             )}

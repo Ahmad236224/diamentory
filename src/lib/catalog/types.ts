@@ -1,4 +1,5 @@
-export type CategorySlug = "chains" | "bracelets" | "rings" | "pendants" | "sets";
+/** Exactly three top-level categories. "chains" = Chain & Lockets (URL kept for continuity). */
+export type CategorySlug = "rings" | "chains" | "bracelets";
 
 export type Finish = "gold" | "silver" | "black" | "two-tone";
 
@@ -25,6 +26,10 @@ export interface ProductImage {
   alt: string;
   width: number;
   height: number;
+  /** Image belongs to a specific finish, when set. */
+  finish?: Finish;
+  /** CSS object-position focal point for cropped frames, e.g. "50% 32%". */
+  focus?: string;
 }
 
 export interface Variant {

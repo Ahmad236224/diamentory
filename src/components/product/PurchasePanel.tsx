@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import type { Finish, Product } from "@/lib/catalog/types";
@@ -31,6 +31,9 @@ export function PurchasePanel({
   const uid = useId();
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState<{ tone: "error" | "ok"; text: string } | null>(null);
+  const [added, setAdded] = useState(false);
+  const addedTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
   const sizeGroupRef = useRef<HTMLFieldSetElement>(null);
   const { finishes, sizes, finish, setFinish, size, setSize, needsSize, variant, sizeAvailability, finishAvailable } =
     selection;
@@ -68,8 +71,14 @@ export function PurchasePanel({
       return;
     }
     setMsg({ tone: "ok", text: res.message ?? "Added to your bag." });
-    onAdded?.();
-    cart.open();
+    // brief "Added ✓" confirmation on the button, then hand over to the bag drawer
+    setAdded(true);
+    window.clearTimeout(addedTimer.current);
+    addedTimer.current = window.setTimeout(() => {
+      setAdded(false);
+      onAdded?.();
+      cart.open();
+    }, 650);
   }
 
   // Whole finish (or whole product) sold out counts as sold out even before a size is chosen.
@@ -169,15 +178,24 @@ export function PurchasePanel({
             : ""}
       </p>
 
-      <div ref={ctaRef} className="mt-4 flex gap-2">
+      <div ref={ctaRef} className="mt-4 flex gap-2 [&>[role=group]]:h-12">
         <QtyStepper value={qty} min={1} max={maxQty} onChange={setQty} label={product.name} />
         <button
           type="button"
-          onClick={() => submit(false)}
+          onClick={() => !added && submit(false)}
           disabled={soldOut}
-          className="eyebrow h-11 flex-1 bg-obsidian px-5 text-ivory transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-live="polite"
+          className="btn btn-dark flex-1 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {soldOut ? "Sold out" : "Add to bag"}
+          {soldOut ? (
+            "Sold out"
+          ) : added ? (
+            <span key="added" className="added-in inline-flex items-center gap-2">
+              Added <span aria-hidden="true">✓</span>
+            </span>
+          ) : (
+            "Add to bag"
+          )}
         </button>
       </div>
       {showBuyNow && (
@@ -185,7 +203,7 @@ export function PurchasePanel({
           type="button"
           onClick={() => submit(true)}
           disabled={soldOut}
-          className="eyebrow mt-2 h-11 w-full border border-obsidian transition-colors hover:bg-obsidian hover:text-ivory disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn btn-outline mt-2 w-full disabled:cursor-not-allowed disabled:opacity-40"
         >
           Buy now
         </button>

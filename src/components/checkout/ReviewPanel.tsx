@@ -38,7 +38,7 @@ export function ReviewPanel({ details: d, onEdit }: { details: CheckoutDetails; 
   return (
     <section aria-labelledby="co-review-h" className="pt-2">
       <p className="eyebrow text-stone">Details complete</p>
-      <h2 id="co-review-h" ref={headingRef} tabIndex={-1} className="display mt-4 text-[clamp(2.4rem,8vw,4.25rem)] focus:outline-none">
+      <h2 id="co-review-h" ref={headingRef} tabIndex={-1} className="t-h2 mt-4 focus:outline-none">
         Your order details are <em>complete.</em>
       </h2>
       <div role="status" className="mt-8 border-l-2 border-obsidian py-1 pl-4 text-[0.95rem] leading-relaxed text-graphite">
@@ -54,7 +54,7 @@ export function ReviewPanel({ details: d, onEdit }: { details: CheckoutDetails; 
         <button
           type="button"
           onClick={copySummary}
-          className="eyebrow inline-flex min-h-12 items-center justify-center border border-obsidian px-6"
+          className="btn btn-outline"
         >
           {copy === "copied" ? "Copied" : "Copy order summary"}
         </button>
@@ -62,7 +62,7 @@ export function ReviewPanel({ details: d, onEdit }: { details: CheckoutDetails; 
           href={SITE.instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className="eyebrow inline-flex min-h-12 items-center justify-center gap-3 bg-obsidian px-6 text-ivory"
+          className="btn btn-dark"
         >
           <IconInstagram size={18} /> Message on Instagram
           <span className="sr-only">(opens in a new tab)</span>
@@ -115,7 +115,7 @@ export function ReviewPanel({ details: d, onEdit }: { details: CheckoutDetails; 
       </dl>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
-        <button type="button" onClick={onEdit} className="eyebrow inline-flex min-h-12 items-center justify-center border border-obsidian px-6">
+        <button type="button" onClick={onEdit} className="btn btn-outline">
           Edit details
         </button>
         <Link href="/cart" className="link-line inline-flex min-h-11 items-center gap-2 self-start text-sm text-graphite sm:self-auto">

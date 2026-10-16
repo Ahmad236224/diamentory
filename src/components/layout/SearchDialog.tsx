@@ -19,7 +19,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
     <Dialog open={open} onClose={onClose} side="top" label="Search" hideTitle>
       <form
         role="search"
-        className="gutter mx-auto flex w-full max-w-[1800px] items-center gap-3 border-b border-obsidian/10 py-3"
+        className="wrap flex items-center gap-3 border-b border-obsidian/10 py-3"
         onSubmit={(e) => {
           e.preventDefault();
           if (!q.trim()) return;
@@ -40,26 +40,26 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
           autoFocus
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search chains, rings, finishes…"
-          className="h-12 min-w-0 flex-1 bg-transparent font-serif text-2xl outline-none placeholder:text-stone md:text-3xl"
+          placeholder="Search rings, chains, lockets…"
+          className="t-h3 h-12 min-w-0 flex-1 bg-transparent normal-case! outline-none placeholder:text-stone"
           aria-controls={listId}
         />
         <button type="button" onClick={onClose} className="-mr-3 grid size-11 shrink-0 place-items-center" aria-label="Close search">
           <IconClose />
         </button>
       </form>
-      <div id={listId} className="gutter mx-auto w-full max-w-[1800px] overflow-y-auto py-6" aria-live="polite">
+      <div id={listId} className="wrap overflow-y-auto py-6" aria-live="polite">
         {q.trim().length > 1 ? (
           results.length ? (
             <>
-              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+              <ul className="grid grid-cols-2 gap-x-[var(--grid-gap)] gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
                 {results.map((p) => {
                   const { min, max } = priceRange(p);
                   return (
                     <li key={p.slug}>
                       <Link href={`/product/${p.slug}`} onClick={onClose} className="group block">
-                        <ProductMedia product={p} className="aspect-[4/5]" sizes="(min-width:1024px) 16vw, 45vw" />
-                        <p className="mt-2 text-sm">{p.name}</p>
+                        <ProductMedia product={p} className="ratio-card" sizes="(min-width:1024px) 16vw, 45vw" />
+                        <p className="mt-2 text-sm"><span className="link-line link-group">{p.name}</span></p>
                         <p className="text-xs text-stone">{formatPriceRange(min, max)}</p>
                       </Link>
                     </li>
@@ -69,24 +69,24 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
               <Link
                 href={`/search?q=${encodeURIComponent(q.trim())}`}
                 onClick={onClose}
-                className="eyebrow mt-6 inline-flex min-h-11 items-center gap-2"
+                className="eyebrow link-arrow mt-6 inline-flex min-h-11 items-center gap-2"
               >
                 View all results <IconArrow size={16} />
               </Link>
             </>
           ) : (
-            <p className="text-stone">No pieces match “{q}”. Try “chain”, “ring” or a finish like “black”.</p>
+            <p className="text-stone">No pieces match “{q}”. Try “chain”, “ring”, “locket” or a finish like “gold”.</p>
           )
         ) : (
           <div>
-            <p className="eyebrow text-stone">Browse</p>
+            <p className="eyebrow text-stone">Shop by category</p>
             <ul className="mt-3 flex flex-wrap gap-2">
               {CATEGORIES.map((c) => (
                 <li key={c.slug}>
                   <Link
                     href={`/shop/${c.slug}`}
                     onClick={onClose}
-                    className="inline-flex min-h-11 items-center border border-obsidian/15 px-4 text-sm transition-colors hover:bg-obsidian hover:text-ivory"
+                    className="btn btn-outline"
                   >
                     {c.name}
                   </Link>

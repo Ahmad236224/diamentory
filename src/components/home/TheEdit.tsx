@@ -3,41 +3,41 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { IconArrow } from "@/components/ui/icons";
 import { CATEGORIES, queryProducts } from "@/lib/catalog";
 import { EditTabs } from "./EditTabs";
-import { SectionRule } from "./SectionRule";
+import { SectionHead } from "./SectionHead";
 
-const TABS = [
-  { label: "Signature", href: "/shop", list: () => queryProducts({ sort: "featured", inStock: true }).filter((p) => p.isFeatured) },
-  ...CATEGORIES.filter((c) => c.slug !== "sets").map((c) => ({
-    label: c.shortName,
-    href: `/shop/${c.slug}`,
-    list: () => queryProducts({ category: c.slug, inStock: true }),
-  })),
-];
-
-/** 08 — The edit. A compact working shop: tabs, real catalogue data, quick add. */
+/** 04 — The edit. The page's one product grid: three pieces per category + a "view all" tile, quick add on every card. */
 export function TheEdit() {
   return (
-    <section aria-labelledby="edit-title" className="bg-ivory py-14 text-obsidian lg:py-24">
-      <div className="gutter mx-auto max-w-[1800px]">
-        <SectionRule n="08" label="The edit" aside="Shop now" />
-        <h2 id="edit-title" className="reveal display mt-8 text-[clamp(2.5rem,7vw,6.5rem)] leading-[0.84]">
+    <section aria-labelledby="edit-title" className="section bg-ivory">
+      <div className="wrap">
+        <SectionHead n="04" label="Shop" href="/shop" cta="Shop all" />
+        <h2 id="edit-title" className="t-h2 reveal mt-8 lg:mt-12">
           The edit.
         </h2>
-        <div className="mt-8">
-          <EditTabs labels={TABS.map((t) => t.label)}>
-            {TABS.map((t) => (
-              <div key={t.label}>
-                <ul className="no-scrollbar -mx-[var(--gutter)] flex snap-x snap-mandatory scroll-px-[var(--gutter)] gap-3 overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:px-0">
-                  {t.list().slice(0, 4).map((p) => (
-                    <li key={p.slug} className="w-[64vw] shrink-0 snap-start sm:w-[38vw] lg:w-auto">
-                      <ProductCard product={p} sizes="(min-width:1024px) 22vw, 64vw" />
+        <div className="reveal mt-8" style={{ "--d": "100ms" } as React.CSSProperties}>
+          <EditTabs labels={CATEGORIES.map((c) => c.name)}>
+            {CATEGORIES.map((c) => (
+              <ul key={c.slug} className="grid grid-cols-2 gap-x-[var(--grid-gap)] gap-y-8 lg:grid-cols-4">
+                {queryProducts({ category: c.slug, inStock: true })
+                  .slice(0, 3)
+                  .map((p) => (
+                    <li key={p.slug}>
+                      <ProductCard product={p} sizes="(min-width:1024px) 22vw, 45vw" />
                     </li>
                   ))}
-                </ul>
-                <Link href={t.href} className="eyebrow link-line mt-6 inline-flex min-h-11 items-center gap-2">
-                  View all {t.label === "Signature" ? "pieces" : t.label.toLowerCase()} <IconArrow size={14} />
-                </Link>
-              </div>
+                <li>
+                  <Link
+                    href={`/shop/${c.slug}`}
+                    className="group ratio-card flex flex-col justify-between bg-obsidian p-5 text-ivory transition-colors hover:bg-graphite lg:p-6"
+                  >
+                    <span className="eyebrow text-champagne">View all</span>
+                    <span className="link-arrow flex items-end justify-between gap-3">
+                      <span className="t-h3">{c.name}</span>
+                      <IconArrow size={20} className="shrink-0" />
+                    </span>
+                  </Link>
+                </li>
+              </ul>
             ))}
           </EditTabs>
         </div>

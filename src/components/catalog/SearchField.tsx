@@ -37,8 +37,8 @@ export function SearchForm({ initial = "" }: { initial?: string }) {
         enterKeyHint="search"
         autoComplete="off"
         defaultValue={initial}
-        placeholder="Chains, rings, gold…"
-        className="h-14 min-w-0 flex-1 bg-transparent font-serif text-3xl outline-none placeholder:text-stone/70 sm:text-4xl"
+        placeholder="Cuban, locket, ring…"
+        className="h-14 min-w-0 flex-1 bg-transparent font-serif text-2xl outline-none placeholder:text-stone/70 sm:text-3xl"
       />
       <button type="submit" className="eyebrow min-h-11 shrink-0 px-2">
         Search

@@ -8,9 +8,9 @@ const out = process.argv[2] ?? "qa-out";
 mkdirSync(out, { recursive: true });
 
 const ROUTES = [
-  "/", "/shop", "/shop/chains", "/shop/bracelets", "/shop/rings", "/shop/pendants", "/shop/sets",
-  "/new-arrivals", "/collections", "/collections/two-tone", "/search?q=chain", "/search?q=zzz",
-  "/product/cuban-link-chain", "/product/black-tennis-bracelet", "/product/sculpted-cuff",
+  "/", "/shop", "/shop/rings", "/shop/chains", "/shop/chains?style=locket", "/shop/bracelets",
+  "/new-arrivals", "/collections", "/collections/gold", "/search?q=chain", "/search?q=zzz",
+  "/product/onyx-square-locket", "/product/cuban-link-chain", "/product/iced-cuban-bracelet", "/product/textured-band-ring",
   "/cart", "/checkout", "/track-order", "/our-story", "/lookbook", "/contact", "/shipping",
   "/returns", "/faq", "/privacy", "/terms", "/nope-404",
 ];

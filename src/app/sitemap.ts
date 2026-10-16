@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/content/site";
-import { CATEGORIES, FINISHES, getAllProducts } from "@/lib/catalog";
+import { CATEGORIES, getAllProducts } from "@/lib/catalog";
+import { activeFinishes } from "@/components/catalog/finishArt";
 
 const STATIC_ROUTES: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
   { path: "/", priority: 1, freq: "weekly" },
@@ -25,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...STATIC_ROUTES.map((r) => ({ url: url(r.path), changeFrequency: r.freq, priority: r.priority })),
     ...CATEGORIES.map((c) => ({ url: url(`/shop/${c.slug}`), changeFrequency: "weekly" as const, priority: 0.8 })),
-    ...FINISHES.map((f) => ({ url: url(`/collections/${f.slug}`), changeFrequency: "weekly" as const, priority: 0.6 })),
+    ...activeFinishes().map((f) => ({ url: url(`/collections/${f.slug}`), changeFrequency: "weekly" as const, priority: 0.6 })),
     ...getAllProducts().map((p) => ({
       url: url(`/product/${p.slug}`),
       lastModified: p.createdAt,

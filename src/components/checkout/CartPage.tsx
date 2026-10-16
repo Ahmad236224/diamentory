@@ -14,10 +14,10 @@ export function CartPage() {
 
   if (cart.lines.length === 0) {
     return (
-      <div className="gutter mx-auto max-w-[1800px] pb-24">
-        <div className="grid gap-y-10 border-t border-obsidian/10 pt-12 lg:grid-cols-12 lg:gap-x-8 lg:pt-16">
+      <div className="wrap min-h-[100svh] pb-[var(--section-y)]">
+        <div className="grid gap-y-10 border-t border-obsidian/10 pt-12 lg:grid-cols-12 lg:gap-x-[var(--grid-gap)] lg:pt-16">
           <div className="lg:col-span-7">
-            <p className="display text-[clamp(2.4rem,8vw,5rem)]">
+            <p className="t-h2">
               Nothing here <em>yet.</em>
             </p>
             <p className="mt-5 max-w-[38ch] text-graphite">
@@ -25,7 +25,7 @@ export function CartPage() {
             </p>
             <Link
               href="/shop"
-              className="eyebrow mt-9 inline-flex min-h-12 items-center gap-3 bg-obsidian px-7 text-ivory"
+              className="btn btn-dark mt-9"
             >
               Shop all <IconArrow size={16} />
             </Link>
@@ -35,7 +35,7 @@ export function CartPage() {
             <ul className="mt-4 border-t border-obsidian/10">
               {NAV_PRIMARY.map((n) => (
                 <li key={n.href} className="border-b border-obsidian/10">
-                  <Link href={n.href} className="group flex min-h-14 items-center justify-between font-serif text-2xl">
+                  <Link href={n.href} className="group flex min-h-14 items-center justify-between t-h3">
                     {n.label}
                     <IconArrow size={18} className="transition-transform group-hover:translate-x-1" />
                   </Link>
@@ -50,7 +50,7 @@ export function CartPage() {
 
   const blocked = cart.hasIssues;
   return (
-    <div className="gutter mx-auto grid max-w-[1800px] gap-y-10 pb-24 lg:grid-cols-12 lg:gap-x-8">
+    <div className="wrap grid min-h-[100svh] content-start gap-y-10 pb-[var(--section-y)] lg:grid-cols-12 lg:gap-x-[var(--grid-gap)]">
       <section aria-labelledby="bag-items-h" className="lg:col-span-7">
         <h2 id="bag-items-h" className="sr-only">
           Items
@@ -83,7 +83,7 @@ export function CartPage() {
                   type="button"
                   disabled
                   aria-describedby="checkout-blocked"
-                  className="eyebrow inline-flex min-h-12 w-full cursor-not-allowed items-center justify-center bg-obsidian/25 text-ivory"
+                  className="btn btn-dark w-full cursor-not-allowed opacity-30"
                 >
                   Checkout
                 </button>
@@ -94,7 +94,7 @@ export function CartPage() {
             ) : (
               <Link
                 href="/checkout"
-                className="eyebrow inline-flex min-h-12 w-full items-center justify-center gap-3 bg-obsidian text-ivory"
+                className="btn btn-dark w-full"
               >
                 Checkout <IconArrow size={16} />
               </Link>
@@ -112,7 +112,7 @@ export function CartPage() {
 
 function CartSkeleton() {
   return (
-    <div className="gutter mx-auto grid max-w-[1800px] gap-y-10 pb-24 lg:grid-cols-12 lg:gap-x-8" aria-busy="true">
+    <div className="wrap grid min-h-[100svh] content-start gap-y-10 pb-[var(--section-y)] lg:grid-cols-12 lg:gap-x-[var(--grid-gap)]" aria-busy="true">
       <p className="sr-only" role="status">
         Loading your bag…
       </p>

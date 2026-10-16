@@ -1,4 +1,5 @@
 import { IconChevron } from "@/components/ui/icons";
+import { PageHeader } from "@/components/catalog/CatalogHeader";
 import { HelpBand } from "./HelpBand";
 
 export type TocItem = { id: string; label: string };
@@ -27,23 +28,18 @@ export function EditorialPage({
   return (
     <>
       <article>
-        <header className="gutter mx-auto max-w-[1800px] border-b border-obsidian/10 pt-12 pb-10 sm:pt-16 lg:pt-24 lg:pb-16">
-          <div className="grid gap-y-6 lg:grid-cols-12 lg:gap-x-8">
-            <p className="eyebrow text-stone lg:col-span-3 lg:pt-4">{eyebrow}</p>
-            <div className="lg:col-span-9">
-              <h1 className="display text-[clamp(2.9rem,12vw,8rem)]">{title}</h1>
-              {draft && (
-                <p className="mt-7 inline-flex items-center gap-3 border border-obsidian px-3 py-2">
-                  <span className="eyebrow">Draft — pending review</span>
-                </p>
-              )}
-              {intro && <div className="mt-7 max-w-[46ch] text-[1.0625rem] leading-relaxed text-graphite">{intro}</div>}
-            </div>
-          </div>
-        </header>
+        <div className="border-b border-obsidian/10">
+          <PageHeader eyebrow={eyebrow} title={title} intro={intro}>
+            {draft && (
+              <p className="mt-6 inline-flex items-center gap-3 border border-obsidian px-3 py-2">
+                <span className="eyebrow">Draft — pending review</span>
+              </p>
+            )}
+          </PageHeader>
+        </div>
 
-        <div className="gutter mx-auto grid max-w-[1800px] gap-y-10 pt-8 pb-20 lg:grid-cols-12 lg:gap-x-8 lg:pt-16 lg:pb-28">
-          <div className="lg:col-span-3">
+        <div className="wrap section-sm grid-12 gap-y-10">
+          <div className="col-span-12 lg:col-span-3">
             <div className="lg:sticky lg:top-[calc(var(--header-h)+2.5rem)]">
               {toc && toc.length > 0 && (
                 <>
@@ -63,7 +59,7 @@ export function EditorialPage({
               {aside && <div className="mt-8 hidden lg:block">{aside}</div>}
             </div>
           </div>
-          <div className="prose-legal min-w-0 lg:col-span-8 lg:col-start-5">{children}</div>
+          <div className="prose-legal col-span-12 min-w-0 lg:col-span-8 lg:col-start-5">{children}</div>
         </div>
       </article>
       {help && <HelpBand />}

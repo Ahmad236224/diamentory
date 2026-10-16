@@ -14,14 +14,15 @@ function QuickViewBody({ product, finish, onClose }: { product: Product; finish:
   return (
     <div className="grid flex-1 overflow-y-auto overscroll-contain md:grid-cols-2">
       <ProductMedia
+        key={selection.finish}
         product={product}
         finish={selection.finish}
-        className="hidden aspect-[4/5] md:block"
-        sizes="(min-width:768px) 40vw, 1px"
+        className="fade-in hidden ratio-card md:block"
+        sizes="(min-width:768px) 448px, 1px"
       />
-      <div className="gutter py-6 md:p-8">
+      <div className="wrap py-6 md:p-8">
         <p className="eyebrow text-stone">{product.subcategory}</p>
-        <h3 className="mt-2 font-serif text-3xl leading-none">{product.name}</h3>
+        <h3 className="t-h3 mt-2">{product.name}</h3>
         <div className="mt-5">
           <PurchasePanel product={product} selection={selection} showBuyNow={false} onAdded={onClose} />
         </div>

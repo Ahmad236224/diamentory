@@ -56,7 +56,7 @@ export function TrackOrderForm() {
     return (
       <section aria-labelledby="to-result-h" className="border border-obsidian/15 p-6 sm:p-9">
         <p className="eyebrow text-stone">Order {order.trim()}</p>
-        <h2 id="to-result-h" ref={resultRef} tabIndex={-1} className="display mt-4 text-[clamp(2rem,6vw,3.25rem)] focus:outline-none">
+        <h2 id="to-result-h" ref={resultRef} tabIndex={-1} className="t-h3 mt-4 focus:outline-none">
           Tracking opens <em>with online ordering.</em>
         </h2>
         <p className="mt-5 max-w-[48ch] leading-relaxed text-graphite">
@@ -71,7 +71,7 @@ export function TrackOrderForm() {
             href={SITE.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="eyebrow inline-flex min-h-12 items-center justify-center gap-3 bg-obsidian px-6 text-ivory"
+            className="btn btn-dark"
           >
             <IconInstagram size={18} /> Message {SITE.instagramHandle}
             <span className="sr-only">(opens in a new tab)</span>
@@ -79,7 +79,7 @@ export function TrackOrderForm() {
           <button
             type="button"
             onClick={() => setDone(false)}
-            className="eyebrow inline-flex min-h-12 items-center justify-center border border-obsidian px-6"
+            className="btn btn-outline"
           >
             Check another order
           </button>
@@ -113,7 +113,7 @@ export function TrackOrderForm() {
         onChange={(e) => setContact(e.target.value)}
         onBlur={() => setTouched((t) => ({ ...t, contact: true }))}
       />
-      <button type="submit" className="eyebrow inline-flex min-h-14 items-center justify-center gap-3 bg-obsidian px-6 text-ivory">
+      <button type="submit" className="btn btn-dark min-h-14">
         Track order <IconArrow size={16} />
       </button>
     </form>

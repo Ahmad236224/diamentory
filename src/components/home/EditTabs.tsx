@@ -3,7 +3,7 @@
 import { useId, useRef, useState } from "react";
 import clsx from "clsx";
 
-/** Accessible tablist; panels are server-rendered and passed in as children. */
+/** Accessible tablist (arrow keys, Home/End); panels are server-rendered and passed in as children. */
 export function EditTabs({ labels, children }: { labels: string[]; children: React.ReactNode[] }) {
   const [active, setActive] = useState(0);
   const uid = useId();
@@ -24,7 +24,11 @@ export function EditTabs({ labels, children }: { labels: string[]; children: Rea
 
   return (
     <>
-      <div role="tablist" aria-label="Shop by category" className="no-scrollbar -mx-[var(--gutter)] flex gap-1 overflow-x-auto px-[var(--gutter)]">
+      <div
+        role="tablist"
+        aria-label="Shop by category"
+        className="no-scrollbar -mx-[var(--gutter)] flex gap-6 overflow-x-auto border-b border-obsidian/10 px-[var(--gutter)] sm:mx-0 sm:gap-8 sm:px-0"
+      >
         {labels.map((l, i) => (
           <button
             key={l}
@@ -32,6 +36,7 @@ export function EditTabs({ labels, children }: { labels: string[]; children: Rea
               tabs.current[i] = el;
             }}
             role="tab"
+            type="button"
             id={`${uid}-t${i}`}
             aria-controls={`${uid}-p${i}`}
             aria-selected={i === active}
@@ -39,8 +44,9 @@ export function EditTabs({ labels, children }: { labels: string[]; children: Rea
             onClick={() => setActive(i)}
             onKeyDown={(e) => onKey(e, i)}
             className={clsx(
-              "eyebrow min-h-11 shrink-0 border px-4 transition-colors",
-              i === active ? "border-obsidian bg-obsidian text-ivory" : "border-obsidian/20 hover:border-obsidian",
+              "eyebrow relative min-h-12 shrink-0 transition-colors",
+              "after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:origin-left after:bg-obsidian after:transition-transform after:duration-[var(--dur-2)] after:ease-[var(--ease-out)]",
+              i === active ? "text-obsidian after:scale-x-100" : "text-stone after:scale-x-0 hover:text-obsidian",
             )}
           >
             {l}
@@ -48,7 +54,14 @@ export function EditTabs({ labels, children }: { labels: string[]; children: Rea
         ))}
       </div>
       {children.map((panel, i) => (
-        <div key={i} role="tabpanel" id={`${uid}-p${i}`} aria-labelledby={`${uid}-t${i}`} hidden={i !== active} className="mt-6">
+        <div
+          key={i}
+          role="tabpanel"
+          id={`${uid}-p${i}`}
+          aria-labelledby={`${uid}-t${i}`}
+          hidden={i !== active}
+          className="tab-panel mt-8"
+        >
           {panel}
         </div>
       ))}

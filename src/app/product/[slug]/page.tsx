@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import {
   FINISHES,
   getAllProducts,
@@ -10,6 +11,7 @@ import {
   isSoldOut,
   priceRange,
   productFinishes,
+  styleSlug,
   type Product,
 } from "@/lib/catalog";
 import { SITE } from "@/content/site";
@@ -17,8 +19,9 @@ import { Breadcrumbs } from "@/components/catalog/CatalogHeader";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductView } from "@/components/product/ProductView";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
-const finishName = (f: string) => FINISHES.find((x) => x.slug === f)?.name ?? f;
 import { IconPlus } from "@/components/ui/icons";
+
+const finishName = (f: string) => FINISHES.find((x) => x.slug === f)?.name ?? f;
 
 type Params = Promise<{ slug: string }>;
 
@@ -81,7 +84,33 @@ function Accordion({ title, children, open }: { title: string; children: React.R
   );
 }
 
-export default async function ProductPage({ params }: { params: Params }) {
+/** Params are awaited inside <Suspense> (Partial Prefetching): known products still prerender in full. */
+export default function ProductPage({ params }: { params: Params }) {
+  return (
+    <Suspense fallback={<ProductSkeleton />}>
+      <ProductContent params={params} />
+    </Suspense>
+  );
+}
+
+function ProductSkeleton() {
+  return (
+    <div className="wrap pt-2 pb-[var(--section-y)]" aria-hidden="true">
+      <div className="h-11" />
+      <div className="mt-2 grid gap-[var(--grid-gap)] lg:grid-cols-12">
+        <div className="skeleton aspect-[4/5] lg:col-span-6" />
+        <div className="space-y-4 pt-4 lg:col-span-5 lg:col-start-8">
+          <div className="skeleton h-3 w-40" />
+          <div className="skeleton h-12 w-3/4" />
+          <div className="skeleton h-4 w-24" />
+          <div className="skeleton mt-8 h-12 w-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+async function ProductContent({ params }: { params: Params }) {
   const product = getProduct((await params).slug);
   if (!product) notFound();
   const category = getCategory(product.category)!;
@@ -114,14 +143,17 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const header = (
     <>
-      <div className="hidden lg:block">
-        <Breadcrumbs items={crumbs} />
-      </div>
-      <p className="eyebrow mt-1 text-stone lg:mt-6">
-        {category.shortName} — {product.subcategory}
-        {product.isNew && !soldOut && <span className="ml-3 text-obsidian">New</span>}
+      <p className="eyebrow flex flex-wrap items-center gap-x-3 gap-y-1 text-stone">
+        <Link href={`/shop/${category.slug}`} className="link-line">
+          {category.shortName}
+        </Link>
+        <span aria-hidden="true">—</span>
+        <Link href={`/shop/${category.slug}?style=${styleSlug(product.subcategory)}`} className="link-line">
+          {product.subcategory}
+        </Link>
+        {product.isNew && !soldOut && <span className="tag">New</span>}
       </p>
-      <h1 className="display mt-3 text-[2.75rem] text-balance sm:text-6xl xl:text-7xl">{product.name}</h1>
+      <h1 className="t-h2 mt-4 text-balance">{product.name}</h1>
       {soldOut && (
         <p className="mt-5 border-l border-obsidian pl-4 text-[0.875rem] text-graphite">
           Currently sold out in every option.{" "}
@@ -182,30 +214,35 @@ export default async function ProductPage({ params }: { params: Params }) {
     <div className="pb-24 lg:pb-0">
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(productSchema(product))} />
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(breadcrumbLd)} />
-      <div className="gutter mx-auto max-w-[1800px] lg:hidden">
-        <Breadcrumbs items={crumbs.slice(0, 3)} />
+      <div className="wrap pt-2 pb-2 lg:pb-6">
+        <div className="lg:hidden">
+          <Breadcrumbs items={crumbs.slice(0, 3)} />
+        </div>
+        <div className="hidden lg:block">
+          <Breadcrumbs items={crumbs} />
+        </div>
       </div>
-      <div className="lg:pt-8">
-        <ProductView product={product} header={header} details={details} />
-      </div>
+      <ProductView product={product} header={header} details={details} />
 
       {complementary.length > 0 && (
-        <section aria-labelledby="pairs-h" className="gutter mx-auto mt-20 max-w-[1800px] border-t border-obsidian/10 py-16 lg:mt-32 lg:py-24">
-          <div className="flex items-end justify-between gap-6">
-            <h2 id="pairs-h" className="display text-4xl lg:text-6xl">
-              Wear it <em className="italic">with</em>
-            </h2>
-            <Link href="/shop" className="eyebrow link-line inline-flex min-h-11 shrink-0 items-center">
-              Shop all
-            </Link>
+        <section aria-labelledby="pairs-h" className="mt-[var(--section-y-sm)] border-t border-obsidian/10">
+          <div className="wrap section-sm">
+            <div className="reveal flex items-end justify-between gap-6">
+              <h2 id="pairs-h" className="t-h2">
+                Wear it <em>with</em>
+              </h2>
+              <Link href="/shop" className="eyebrow link-line inline-flex min-h-11 shrink-0 items-center">
+                Shop all
+              </Link>
+            </div>
+            <ul className="product-grid reveal-stagger mt-8 lg:mt-10">
+              {complementary.map((p, i) => (
+                <li key={p.slug} className={i === 3 ? "md:max-lg:hidden" : undefined}>
+                  <ProductCard product={p} sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw" />
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-4 lg:grid-cols-4 lg:gap-6">
-            {complementary.map((p) => (
-              <li key={p.slug}>
-                <ProductCard product={p} sizes="(min-width:1024px) 22vw, 48vw" />
-              </li>
-            ))}
-          </ul>
         </section>
       )}
       <RecentlyViewed current={product.slug} />

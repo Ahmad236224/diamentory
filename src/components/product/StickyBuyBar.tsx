@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import type { Product } from "@/lib/catalog/types";
 import { priceRange } from "@/lib/catalog";
@@ -30,6 +30,9 @@ export function StickyBuyBar({
   const [nearEnd, setNearEnd] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [added, setAdded] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
 
   useEffect(() => {
     const el = target.current;
@@ -61,7 +64,12 @@ export function StickyBuyBar({
     if ((needsSize && !size) || !variant) return setSheet(true);
     const res = cart.add(product.slug, variant.id, 1);
     if (!res.ok) return setNote(res.message ?? "Could not add to bag.");
-    cart.open();
+    setAdded(true);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => {
+      setAdded(false);
+      cart.open();
+    }, 650);
   }
 
   const visible = past && !nearEnd && !allOut;
@@ -77,7 +85,7 @@ export function StickyBuyBar({
         )}
         style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       >
-        <div className="gutter flex items-center gap-4 pt-3">
+        <div className="wrap flex items-center gap-4 pt-3">
           <div className="min-w-0 flex-1">
             <p className="truncate text-[0.875rem]">{product.name}</p>
             <p className="truncate text-[0.75rem] text-stone tabular-nums">
@@ -92,11 +100,18 @@ export function StickyBuyBar({
           </div>
           <button
             type="button"
-            onClick={act}
+            onClick={() => !added && act()}
             disabled={soldOut}
-            className="eyebrow min-h-12 shrink-0 bg-obsidian px-5 text-ivory disabled:opacity-40"
+            aria-live="polite"
+            className="btn btn-dark shrink-0 disabled:opacity-40"
           >
-            {label}
+            {added ? (
+              <span className="added-in inline-flex items-center gap-2">
+                Added <span aria-hidden="true">✓</span>
+              </span>
+            ) : (
+              label
+            )}
           </button>
         </div>
       </div>
@@ -107,7 +122,7 @@ export function StickyBuyBar({
         label={`Choose options for ${product.name}`}
         title={product.name}
       >
-        <div className="gutter flex-1 overflow-y-auto overscroll-contain py-6">
+        <div className="wrap flex-1 overflow-y-auto overscroll-contain py-6">
           <PurchasePanel product={product} selection={selection} showBuyNow={false} onAdded={() => setSheet(false)} />
         </div>
       </Dialog>

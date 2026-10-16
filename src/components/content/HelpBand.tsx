@@ -6,10 +6,10 @@ import { IconArrow, IconInstagram } from "@/components/ui/icons";
 export function HelpBand() {
   return (
     <aside aria-labelledby="help-band-h" className="border-t border-obsidian/10">
-      <div className="gutter mx-auto grid max-w-[1800px] gap-8 py-16 lg:grid-cols-12 lg:gap-x-8 lg:py-24">
-        <p className="eyebrow text-stone lg:col-span-3 lg:pt-3">Client care</p>
-        <div className="lg:col-span-9">
-          <h2 id="help-band-h" className="display text-[clamp(2.2rem,7vw,4.5rem)]">
+      <div className="wrap section-sm grid-12 gap-y-6">
+        <p className="eyebrow col-span-12 text-stone lg:col-span-3 lg:pt-3">Client care</p>
+        <div className="reveal col-span-12 lg:col-span-8 lg:col-start-5">
+          <h2 id="help-band-h" className="t-h2">
             Still have a <em>question?</em>
           </h2>
           <p className="mt-5 max-w-[42ch] text-graphite">
@@ -17,10 +17,7 @@ export function HelpBand() {
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <InstagramButton />
-            <Link
-              href="/faq"
-              className="eyebrow inline-flex min-h-12 items-center justify-center gap-3 border border-obsidian px-6"
-            >
+            <Link href="/faq" className="btn btn-outline">
               Read the FAQ
             </Link>
           </div>
@@ -36,11 +33,7 @@ export function InstagramButton({ label = `Message ${SITE.instagramHandle}`, ton
       href={SITE.instagram}
       target="_blank"
       rel="noopener noreferrer"
-      className={
-        tone === "dark"
-          ? "eyebrow inline-flex min-h-12 items-center justify-center gap-3 bg-obsidian px-6 text-ivory"
-          : "eyebrow inline-flex min-h-12 items-center justify-center gap-3 bg-ivory px-6 text-obsidian"
-      }
+      className={tone === "dark" ? "btn btn-dark" : "btn btn-light"}
     >
       <IconInstagram size={18} />
       {label}

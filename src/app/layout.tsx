@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Manrope } from "next/font/google";
+import { Unbounded, Manrope } from "next/font/google";
+import { RevealObserver } from "@/components/motion/RevealObserver";
 import { SITE } from "@/content/site";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -8,10 +9,10 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { FixtureNotice } from "@/components/layout/FixtureNotice";
 import "./globals.css";
 
-// Display: Archivo with the width axis, used at 125% (expanded) for the brand voice.
-const archivo = Archivo({
+// Display: Unbounded — headlines, collection titles, wordmark.
+const display = Unbounded({
   subsets: ["latin"],
-  axes: ["wdth"],
+  weight: ["300", "600"],
   variable: "--font-display",
   display: "swap",
 });
@@ -48,7 +49,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-PK" className={`${archivo.variable} ${manrope.variable}`}>
+    <html lang="en-PK" className={`${display.variable} ${manrope.variable}`}>
       <body className="min-h-dvh">
         <a
           href="#main"
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         >
           Skip to content
         </a>
+        <RevealObserver />
         <CartProvider>
           <FixtureNotice />
           <SiteHeader />

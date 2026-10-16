@@ -100,11 +100,11 @@ const GROUPS: { id: string; title: string; items: Faq[] }[] = [
       {
         id: "images",
         q: "Are the product images photographs?",
-        text: "Not yet. The current images are illustrations while product photography is being prepared, and the products, prices and stock shown on this preview are samples.",
+        text: "Yes. Every piece is shown in Diamentory’s own photographs — studio shots and frames from our Instagram. Prices, sizes and stock shown on this preview are still samples.",
         a: (
           <p>
-            Not yet. The current images are illustrations while product photography is being prepared, and the products,
-            prices and stock shown on this preview are samples.
+            Yes. Every piece is shown in Diamentory&rsquo;s own photographs — studio shots and frames from our Instagram.
+            Prices, sizes and stock shown on this preview are still samples.
           </p>
         ),
       },

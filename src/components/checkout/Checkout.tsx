@@ -116,9 +116,9 @@ function CheckoutForm() {
   const reviewing = status.kind === "unavailable";
 
   return (
-    <div className="gutter mx-auto max-w-[1800px] pb-24">
+    <div className="wrap pb-[var(--section-y)]">
       <Steps current={reviewing ? 2 : 1} />
-      <div className="grid gap-y-8 lg:grid-cols-12 lg:gap-x-8">
+      <div className="grid gap-y-8 lg:grid-cols-12 lg:gap-x-[var(--grid-gap)]">
         <MobileSummary />
 
         <div className="min-w-0 lg:col-span-7">
@@ -292,7 +292,7 @@ function CheckoutForm() {
                 <button
                   type="submit"
                   aria-disabled={status.kind === "submitting" || undefined}
-                  className="eyebrow inline-flex min-h-14 w-full items-center justify-center gap-3 bg-obsidian px-6 text-ivory transition-opacity aria-disabled:opacity-60"
+                  className="btn btn-dark min-h-14 w-full aria-disabled:opacity-60"
                 >
                   {status.kind === "submitting" ? (
                     <>
@@ -410,7 +410,7 @@ function Step({
     <fieldset className="border-t border-obsidian/10 pt-7 pb-10" aria-describedby={errorId}>
       <legend className="float-left mb-7 flex w-full items-baseline gap-4">
         <span className="text-[0.6875rem] tabular-nums tracking-[0.2em] text-stone">{n}</span>
-        <span className="font-serif text-[1.75rem] leading-none sm:text-[2rem]">{title}</span>
+        <span className="t-h3">{title}</span>
         {optional && <span className="ml-auto text-xs text-stone">Optional</span>}
       </legend>
       <div className="clear-both">{children}</div>
@@ -482,9 +482,9 @@ function ChoiceCard({
 
 function Blocked({ kind }: { kind: "empty" | "issues" }) {
   return (
-    <div className="gutter mx-auto max-w-[1800px] pb-24">
+    <div className="wrap pb-[var(--section-y)]">
       <div className="max-w-xl border-t border-obsidian/10 pt-10">
-        <p className="display text-[clamp(2.2rem,7vw,3.75rem)]">
+        <p className="t-h2">
           {kind === "empty" ? (
             <>
               Your bag is <em>empty.</em>
@@ -502,7 +502,7 @@ function Blocked({ kind }: { kind: "empty" | "issues" }) {
         </p>
         <Link
           href={kind === "empty" ? "/shop" : "/cart"}
-          className="eyebrow mt-9 inline-flex min-h-12 items-center gap-3 bg-obsidian px-7 text-ivory"
+          className="btn btn-dark mt-9"
         >
           {kind === "empty" ? "Shop all" : "Review your bag"} <IconArrow size={16} />
         </Link>
@@ -513,12 +513,12 @@ function Blocked({ kind }: { kind: "empty" | "issues" }) {
 
 function CheckoutSkeleton() {
   return (
-    <div className="gutter mx-auto max-w-[1800px] pb-24" aria-busy="true">
+    <div className="wrap min-h-[100svh] pb-[var(--section-y)]" aria-busy="true">
       <p className="sr-only" role="status">
         Loading checkout…
       </p>
       <div className="skeleton mb-8 h-4 w-48 lg:mb-12" />
-      <div className="grid gap-y-8 lg:grid-cols-12 lg:gap-x-8">
+      <div className="grid gap-y-8 lg:grid-cols-12 lg:gap-x-[var(--grid-gap)]">
         <div className="skeleton -mx-[var(--gutter)] h-14 lg:hidden" />
         <div className="space-y-5 lg:col-span-7">
           <div className="skeleton h-10 w-1/2" />

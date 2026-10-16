@@ -8,13 +8,22 @@ const PRODUCTS: Product[] = FIXTURE_PRODUCTS;
 
 export const USING_FIXTURES = PRODUCTS.some((p) => p.isFixture);
 
+/** Exactly three top-level categories, in this order everywhere. */
 export const CATEGORIES: Category[] = [
   {
+    slug: "rings",
+    name: "Rings",
+    shortName: "Rings",
+    tagline: "Small form. Full statement.",
+    intro: "Bands and statement rings with textured, polished and stone-set finishes.",
+    art: "band-ring",
+  },
+  {
     slug: "chains",
-    name: "Chains & Necklaces",
-    shortName: "Chains",
+    name: "Chain & Lockets",
+    shortName: "Chain & Lockets",
     tagline: "The line that defines the look.",
-    intro: "Cuban, rope, tennis and box chains in gold, silver, black and two-tone finishes.",
+    intro: "Cuban, rope, herringbone, Franco, snake and box chains — and the lockets and pendants that hang from them.",
     art: "cuban-chain",
   },
   {
@@ -22,32 +31,8 @@ export const CATEGORIES: Category[] = [
     name: "Bracelets",
     shortName: "Bracelets",
     tagline: "Weight at the wrist.",
-    intro: "Cuban link and tennis bracelets, cuffs and bangles, made to be worn together.",
+    intro: "Cuban link and iced bracelets, built to be worn on their own or stacked.",
     art: "cuban-bracelet",
-  },
-  {
-    slug: "rings",
-    name: "Rings",
-    shortName: "Rings",
-    tagline: "Small form. Full statement.",
-    intro: "Bands, signets and statement rings for every finger and every stack.",
-    art: "signet-ring",
-  },
-  {
-    slug: "pendants",
-    name: "Pendants",
-    shortName: "Pendants",
-    tagline: "A point of focus.",
-    intro: "Pendants and pendant necklaces, from clean geometry to symbolic forms.",
-    art: "pendant-cross",
-  },
-  {
-    slug: "sets",
-    name: "Sets & Stacks",
-    shortName: "Sets",
-    tagline: "Composed to be worn together.",
-    intro: "Matched sets and curated stacks, styled so you don't have to.",
-    art: "set",
   },
 ];
 
@@ -93,6 +78,8 @@ export function totalStock(p: Product) {
 
 export interface Query {
   category?: CategorySlug;
+  /** Subcategory / style within a category, e.g. "Cuban link", "Locket" (case-insensitive). */
+  style?: string;
   finish?: Finish[];
   q?: string;
   sort?: SortKey;
@@ -124,6 +111,10 @@ export function searchScore(p: Product, q: string) {
 export function queryProducts(query: Query): Product[] {
   let list = PRODUCTS.slice();
   if (query.category) list = list.filter((p) => p.category === query.category);
+  if (query.style) {
+    const st = query.style.toLowerCase();
+    list = list.filter((p) => p.subcategory.toLowerCase() === st);
+  }
   if (query.finish?.length) {
     const set = new Set(query.finish);
     list = list.filter((p) => p.variants.some((v) => set.has(v.finish)));
@@ -190,4 +181,18 @@ export function parseFinishParam(v: string | string[] | undefined): Finish[] {
 export function parseSortParam(v: string | string[] | undefined): SortKey | undefined {
   const s = Array.isArray(v) ? v[0] : v;
   return SORT_OPTIONS.some((o) => o.value === s) ? (s as SortKey) : undefined;
+}
+
+/** Distinct styles (subcategories) present in a product list, in first-seen order. */
+export function stylesOf(products: Product[]): string[] {
+  return [...new Set(products.map((p) => p.subcategory).filter(Boolean))];
+}
+
+/** URL-safe style slug: "Cuban link" → "cuban-link". */
+export const styleSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+export function parseStyleParam(v: string | string[] | undefined, products: Product[]): string | undefined {
+  const raw = (Array.isArray(v) ? v[0] : v)?.toLowerCase();
+  if (!raw) return undefined;
+  return stylesOf(products).find((s) => styleSlug(s) === raw);
 }

@@ -86,7 +86,10 @@ type CartCtx = {
   setQty: (variantId: string, qty: number) => void;
   remove: (variantId: string) => void;
   clear: () => void;
+  /** Variant id of the line added during the current drawer session (for the highlight); cleared on close. */
   lastAdded: string | null;
+  /** Increments on every successful add, and once more when the drawer closes after an add (drives the bag-count bump). */
+  addSeq: number;
 };
 
 const Ctx = createContext<CartCtx | null>(null);
@@ -109,6 +112,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
   const [isOpen, setOpen] = useState(false);
   const [lastAdded, setLastAdded] = useState<string | null>(null);
+  const [addSeq, setAddSeq] = useState(0);
 
   const resolved = useMemo(() => stored.map(resolve), [stored]);
 
@@ -127,6 +131,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       : [...lines, { slug, variantId, qty: nextQty, priceAtAdd: variant.price }];
     commit(next);
     setLastAdded(variantId);
+    setAddSeq((n) => n + 1);
     const capped = current + qty > max;
     return { ok: true, message: capped ? `Only ${max} available — quantity adjusted.` : undefined };
   }, []);
@@ -152,14 +157,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       hasIssues: resolved.some((l) => l.issue),
       isOpen,
       open: () => setOpen(true),
-      close: () => setOpen(false),
+      close: () => {
+        setOpen(false);
+        // replay the count bump where the drawer covered the header (full-width on phones)
+        if (lastAdded) {
+          setLastAdded(null);
+          setAddSeq((n) => n + 1);
+        }
+      },
       add,
       setQty,
       remove,
       clear,
       lastAdded,
+      addSeq,
     };
-  }, [resolved, hydrated, isOpen, add, setQty, remove, clear, lastAdded]);
+  }, [resolved, hydrated, isOpen, add, setQty, remove, clear, lastAdded, addSeq]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

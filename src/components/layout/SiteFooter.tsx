@@ -7,29 +7,29 @@ async function currentYear() {
   return new Date().getFullYear();
 }
 
+const SHOP = [{ href: "/shop", label: "Shop all" }, ...NAV_PRIMARY, { href: "/new-arrivals", label: "New Arrivals" }];
+
 export async function SiteFooter() {
   const year = await currentYear();
   return (
     <footer className="bg-obsidian text-ivory">
-      <div className="gutter mx-auto max-w-[1800px] pt-16 pb-10 lg:pt-24">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <p className="max-w-xs text-[0.95rem] leading-relaxed text-ivory/70">
-              Statement chains, bracelets, rings and pendants. Shipping all over Pakistan.
-            </p>
+      <div className="wrap pt-[var(--section-y-sm)] pb-8">
+        <div className="grid gap-y-12 lg:grid-cols-12 lg:gap-x-[var(--grid-gap)]">
+          <div className="lg:col-span-4">
+            <p className="max-w-xs text-ivory/65">Rings, chains, lockets and bracelets. Shipping all over Pakistan.</p>
             <a
               href={SITE.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex min-h-11 items-center gap-3 text-sm text-ivory/80 hover:text-ivory"
+              className="mt-6 inline-flex min-h-11 items-center gap-3 text-sm text-ivory/80 hover:text-ivory"
             >
-              <IconInstagram /> Follow {SITE.instagramHandle}
+              <IconInstagram /> <span className="link-line">{SITE.instagramHandle}</span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7">
-            <FooterCol title="Shop" links={[{ href: "/shop", label: "Shop All" }, ...NAV_PRIMARY, { href: "/new-arrivals", label: "New Arrivals" }]} />
+          <div className="grid grid-cols-2 gap-x-[var(--grid-gap)] gap-y-10 sm:grid-cols-3 lg:col-span-7 lg:col-start-6">
+            <FooterCol title="Shop" links={SHOP} />
             <FooterCol title="Diamentory" links={NAV_SECONDARY.filter((n) => n.href !== "/new-arrivals")} />
             <div>
               <FooterCol title="Client care" links={NAV_SUPPORT} />
@@ -42,14 +42,26 @@ export async function SiteFooter() {
           </div>
         </div>
 
-        <p
+        {/* Wordmark set to the exact width of the content column */}
+        <svg
           aria-hidden="true"
-          className="wordmark mt-20 select-none whitespace-nowrap text-center text-[8.6vw] leading-none tracking-[-0.03em] text-ivory"
+          viewBox="0 0 1000 86"
+          className="mt-16 block w-full select-none fill-ivory lg:mt-24"
+          preserveAspectRatio="xMidYMid meet"
         >
-          Diamentory
-        </p>
+          <text
+            x="0"
+            y="84"
+            textLength="1000"
+            lengthAdjust="spacing"
+            className="wordmark"
+            style={{ fontSize: "112px", letterSpacing: 0 }}
+          >
+            DIAMENTORY
+          </text>
+        </svg>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-ivory/10 pt-6 text-xs text-ivory/55 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-2 border-t border-ivory/15 pt-4 text-xs text-ivory/55 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} Diamentory. Prices in PKR.</p>
           <ul className="flex gap-6">
             {NAV_LEGAL.map((n) => (
@@ -74,7 +86,7 @@ function FooterCol({ title, links }: { title: string; links: { href: string; lab
         {links.map((l) => (
           <li key={l.href}>
             <Link href={l.href} className="inline-flex min-h-10 items-center text-sm text-ivory/75 hover:text-ivory">
-              {l.label}
+              <span className="link-line">{l.label}</span>
             </Link>
           </li>
         ))}

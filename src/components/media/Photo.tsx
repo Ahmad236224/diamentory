@@ -4,6 +4,7 @@ import { getImage } from "@/content/images";
 
 /**
  * Manifest-driven photograph. Always fills its (aspect-reserved) parent, so there is no CLS.
+ * `position` is the object-position focal point — always set it so jewellery is never cropped.
  * `mono` desaturates warm/colour frames into the black-and-white system.
  */
 export function Photo({
@@ -15,9 +16,11 @@ export function Photo({
   position = "center",
   mono,
   alt,
+  dark,
 }: {
   id: string;
   sizes: string;
+  /** Above-the-fold image: preloaded (Next 16 `preload`, replaces the deprecated `priority`). */
   priority?: boolean;
   className?: string;
   imgClassName?: string;
@@ -25,6 +28,8 @@ export function Photo({
   mono?: boolean;
   /** Override the manifest alt (e.g. "" when purely decorative next to a caption). */
   alt?: string;
+  /** Placeholder tone while loading: dark sections use graphite instead of paper. */
+  dark?: boolean;
 }) {
   const img = getImage(id);
   return (
@@ -32,7 +37,8 @@ export function Photo({
       className={clsx(
         // don't fight a caller's `absolute`/`fixed` (same specificity, cascade order decides)
         !/(^|\s)(absolute|fixed)(\s|$)/.test(className ?? "") && "relative",
-        "overflow-hidden bg-obsidian",
+        "overflow-hidden",
+        dark ? "bg-graphite" : "bg-paper",
         className,
       )}
     >
@@ -41,12 +47,8 @@ export function Photo({
         alt={alt ?? img.alt}
         fill
         sizes={sizes}
-        priority={priority}
-        className={clsx(
-          "object-cover",
-          mono && "grayscale contrast-[1.08] transition-[filter] duration-700 [@media(hover:hover)]:group-hover:grayscale-0",
-          imgClassName,
-        )}
+        preload={priority}
+        className={clsx("object-cover", mono && "grayscale contrast-[1.06]", imgClassName)}
         style={{ objectPosition: position }}
       />
     </div>

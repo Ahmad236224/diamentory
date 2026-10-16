@@ -5,13 +5,10 @@ import clsx from "clsx";
 import type { Finish, Product } from "@/lib/catalog/types";
 import { Dialog } from "@/components/ui/Dialog";
 import { IconChevron, IconClose, IconMinus, IconPlus } from "@/components/ui/icons";
-import { ProductMedia } from "./ProductMedia";
+import { ProductMedia, photosFor } from "./ProductMedia";
 
-const N = 4;
 const MAX_ZOOM = 4;
 const TAP_ZOOM = 2.5;
-const RATIO = 4 / 5;
-const LABEL = ["Front", "Detail", "Angle", "On dark"];
 
 /** Full-screen viewer: tap/click to zoom, pinch, drag/scroll to pan, arrows + Esc. */
 export function ImageViewer({
@@ -56,6 +53,12 @@ function Stage({
   onIndex: (i: number) => void;
   onClose: () => void;
 }) {
+  const photos = photosFor(product, finish);
+  const N = Math.max(1, photos.length);
+  const photo = photos[index % N];
+  // the frame takes the photo's own ratio, so the whole image is shown (no crop) at zoom 1
+  const RATIO = photo ? photo.width / photo.height : 4 / 5;
+  const LABEL = photos.map((p) => p.alt);
   const stage = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [zoom, setZoom] = useState(1);
@@ -182,10 +185,14 @@ function Stage({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="gutter flex h-14 shrink-0 items-center justify-between">
+      <div className="wrap flex h-14 shrink-0 items-center justify-between">
         <p className="eyebrow text-champagne tabular-nums" aria-live="polite">
-          {index + 1} / {N} <span className="sr-only">— {LABEL[index]}</span>
-          <span aria-hidden="true" className="ml-3 text-ivory/50">{LABEL[index]}</span>
+          {N > 1 && (
+            <>
+              {index + 1} / {N}
+            </>
+          )}
+          <span className="sr-only"> {LABEL[index]}</span>
         </p>
         <div className="-mr-3 flex items-center">
           <button type="button" className={btn} onClick={() => zoomAt(zoom - 0.75)} disabled={zoom <= 1} aria-label="Zoom out">
@@ -255,7 +262,7 @@ function Stage({
         <button
           type="button"
           onClick={() => go(-1)}
-          className={clsx(btn, "absolute top-1/2 left-2 -translate-y-1/2 bg-obsidian/40 max-sm:hidden")}
+          className={clsx(btn, "absolute top-1/2 left-2 -translate-y-1/2 bg-obsidian/40 max-sm:hidden", N < 2 && "hidden")}
           aria-label="Previous image"
         >
           <IconChevron dir="left" />
@@ -263,14 +270,14 @@ function Stage({
         <button
           type="button"
           onClick={() => go(1)}
-          className={clsx(btn, "absolute top-1/2 right-2 -translate-y-1/2 bg-obsidian/40 max-sm:hidden")}
+          className={clsx(btn, "absolute top-1/2 right-2 -translate-y-1/2 bg-obsidian/40 max-sm:hidden", N < 2 && "hidden")}
           aria-label="Next image"
         >
           <IconChevron dir="right" />
         </button>
       </div>
 
-      <div className="safe-bottom flex shrink-0 justify-center gap-2 pt-3">
+      <div className={clsx("safe-bottom flex shrink-0 justify-center gap-2 pt-3", N < 2 && "invisible")}>
         {Array.from({ length: N }, (_, i) => (
           <button
             key={i}
@@ -279,7 +286,7 @@ function Stage({
               setZoom(1);
               onIndex(i);
             }}
-            aria-label={`Image ${i + 1}: ${LABEL[i]}`}
+            aria-label={`Image ${i + 1}: ${LABEL[i] ?? product.name}`}
             aria-current={i === index ? "true" : undefined}
             className={clsx(
               "relative h-14 w-11 overflow-hidden ring-1 transition-opacity",

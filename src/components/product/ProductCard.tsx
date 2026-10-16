@@ -3,7 +3,7 @@ import clsx from "clsx";
 import type { Finish, Product } from "@/lib/catalog/types";
 import { isSoldOut, priceRange, productFinishes } from "@/lib/catalog";
 import { formatPriceRange } from "@/lib/format";
-import { ProductMedia } from "./ProductMedia";
+import { ProductMedia, photosFor } from "./ProductMedia";
 import { QuickView } from "./QuickView";
 import { FINISH_SWATCH, FINISH_LABEL } from "./finishStyle";
 
@@ -13,7 +13,7 @@ export function ProductCard({
   priority,
   sizes,
   className,
-  aspect = "aspect-[4/5]",
+  aspect = "ratio-card",
 }: {
   product: Product;
   finish?: Finish;
@@ -40,13 +40,15 @@ export function ProductCard({
               sizes={sizes}
               className="absolute inset-0 transition-transform duration-[1.2s] ease-[var(--ease-out)] group-hover:scale-[1.04]"
             />
-            <ProductMedia
-              product={product}
-              finish={f}
-              view={1}
-              sizes={sizes}
-              className="absolute inset-0 opacity-0 transition-opacity duration-700 [@media(hover:hover)]:group-hover:opacity-100"
-            />
+            {photosFor(product, f).length > 1 && (
+              <ProductMedia
+                product={product}
+                finish={f}
+                view={1}
+                sizes={sizes}
+                className="absolute inset-0 opacity-0 transition-opacity duration-700 [@media(hover:hover)]:group-hover:opacity-100"
+              />
+            )}
           </div>
         </Link>
         <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between p-3">
