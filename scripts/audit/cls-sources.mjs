@@ -14,7 +14,12 @@ await ctx.addInitScript(() => {
   }).observe({ type: "layout-shift", buffered: true });
 });
 const p = await ctx.newPage();
-await p.goto("http://localhost:3217" + path, { waitUntil: "networkidle" });
+await p.goto((process.env.BASE ?? "http://localhost:3217") + path, { waitUntil: "load" });
 await p.waitForTimeout(1500);
+if (process.env.SCROLL) {
+  const H = await p.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y < H; y += 300) { await p.evaluate((y) => scrollTo(0, y), y); await p.waitForTimeout(100); }
+  await p.waitForTimeout(800);
+}
 console.log(JSON.stringify(await p.evaluate(() => window.__shifts), null, 1));
 await b.close();

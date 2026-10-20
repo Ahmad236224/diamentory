@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Diamentory's point of view: jewellery as personal expression — for individuality, confidence and the freedom to define your own style.",
   alternates: { canonical: "/our-story" },
-  openGraph: { title: "Our Story — DIAMENTORY", url: "/our-story" },
+  openGraph: { images: SITE.ogImages, title: "Our Story — DIAMENTORY", url: "/our-story" },
 };
 
 const PRINCIPLES = [
@@ -98,12 +98,12 @@ export default function OurStoryPage() {
       <section aria-labelledby="story-close" className="bg-paper">
         <div className="wrap section grid-12 gap-y-10">
           {CLOSE && (
-            <div className="reveal-mask relative col-span-6 ratio-portrait overflow-hidden sm:col-span-4 lg:col-span-3">
+            <div className="reveal-mask relative col-span-8 col-start-5 ratio-portrait overflow-hidden sm:col-span-4 sm:col-start-1 lg:col-span-3">
               <Image
                 src={CLOSE.src}
                 alt={CLOSE.alt}
                 fill
-                sizes="(min-width:1024px) 20vw, 40vw"
+                sizes="(min-width:1024px) 20vw, (min-width:640px) 33vw, 66vw"
                 className="object-cover"
                 style={{ objectPosition: CLOSE.focus }}
               />

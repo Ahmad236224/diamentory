@@ -101,7 +101,7 @@ export function Facts({ items, caption }: { items: { label: string; value: React
         {items.map((it) => (
           <div key={it.label} className="grid grid-cols-1 gap-1 border-b border-obsidian/10 py-4 sm:grid-cols-[14rem_1fr] sm:gap-6">
             <dt className="text-sm text-stone">{it.label}</dt>
-            <dd className="text-[0.95rem] text-obsidian">{it.value}</dd>
+            <dd className="text-[0.9375rem] text-obsidian">{it.value}</dd>
           </div>
         ))}
       </dl>

@@ -45,10 +45,30 @@ export function RevealObserver() {
       schedule();
     });
 
+    // .reveal-mask starts as clip-path: inset(100% …). Chrome's IntersectionObserver honours the
+    // target's own clip-path, so a fully clipped frame never "intersects" and would stay hidden forever.
+    // Masks are therefore revealed by a geometric check (getBoundingClientRect ignores clip-path).
+    const pendingMasks = new Set<HTMLElement>();
+    const checkMasks = (vh: number) => {
+      for (const el of pendingMasks) {
+        if (!el.isConnected) {
+          pendingMasks.delete(el);
+          continue;
+        }
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 && r.height === 0) continue; // inside a hidden subtree
+        if (r.top < vh * 0.92 && r.bottom > 0) {
+          el.classList.add("is-in");
+          pendingMasks.delete(el);
+        }
+      }
+    };
+
     let raf = 0;
     const update = () => {
       raf = 0;
       const vh = window.innerHeight;
+      if (pendingMasks.size) checkMasks(vh);
       for (const el of visibleDrift) {
         const r = el.getBoundingClientRect();
         const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
@@ -66,11 +86,14 @@ export function RevealObserver() {
         const r = el.getBoundingClientRect();
         if (reduce || (r.top < window.innerHeight && r.bottom > 0 && !el.dataset.revealWait)) {
           el.classList.add("is-in");
+        } else if (el.classList.contains("reveal-mask")) {
+          pendingMasks.add(el);
         } else {
           io.observe(el);
         }
       });
       if (!reduce) scope.querySelectorAll<HTMLElement>(".drift").forEach((el) => driftIo.observe(el));
+      if (pendingMasks.size) schedule();
     };
 
     const first = idle(() => {

@@ -39,7 +39,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title: `${p.name}${cat ? ` — ${cat.shortName}` : ""}`,
     description,
     alternates: { canonical: `/product/${p.slug}` },
-    openGraph: { title: `${p.name} — DIAMENTORY`, description, url: `/product/${p.slug}`, type: "website" },
+    openGraph: {
+      title: `${p.name} — DIAMENTORY`,
+      description,
+      url: `/product/${p.slug}`,
+      type: "website",
+      images: p.images.slice(0, 1).map((i) => ({ url: i.src, width: i.width, height: i.height, alt: i.alt })),
+    },
   };
 }
 
@@ -57,8 +63,12 @@ function productSchema(p: Product) {
     name: p.name,
     description: p.description,
     url,
-    offers:
-      min === max
+    brand: { "@type": "Brand", name: "Diamentory" },
+    image: p.images.map((i) => new URL(i.src, SITE.url).toString()),
+    // Sample prices/stock must not be published to search engines as real offers.
+    offers: p.isFixture
+      ? undefined
+      : min === max
         ? { "@type": "Offer", price: String(min), priceCurrency: "PKR", availability, url }
         : {
             "@type": "AggregateOffer",
@@ -95,7 +105,8 @@ export default function ProductPage({ params }: { params: Params }) {
 
 function ProductSkeleton() {
   return (
-    <div className="wrap pt-2 pb-[var(--section-y)]" aria-hidden="true">
+    // min-h: the real page is always taller than one screen; a shorter skeleton lets the footer flash in (CLS)
+    <div className="wrap min-h-[100svh] pt-2 pb-[var(--section-y)]" aria-hidden="true">
       <div className="h-11" />
       <div className="mt-2 grid gap-[var(--grid-gap)] lg:grid-cols-12">
         <div className="skeleton aspect-[4/5] lg:col-span-6" />

@@ -26,7 +26,7 @@ export function RingsSection() {
               <br />
               <em>Full statement.</em>
             </h2>
-            <p className="reveal mt-5 max-w-[26rem] text-champagne" style={{ "--d": "100ms" } as React.CSSProperties}>
+            <p className="reveal mt-5 max-w-[26rem] text-pretty text-champagne" style={{ "--d": "100ms" } as React.CSSProperties}>
               Bands and statement rings — textured, polished and stone-set.
             </p>
           </div>

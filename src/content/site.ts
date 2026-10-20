@@ -5,10 +5,13 @@
  */
 export const SITE = {
   name: "DIAMENTORY",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  // Canonical origin for canonicals, sitemap, robots and OG. Set NEXT_PUBLIC_SITE_URL when a custom domain goes live.
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://diamentory.vercel.app",
   description:
-    "Statement chains, bracelets, rings and pendants in gold, silver, black and two-tone. Jewellery for those who define their own style.",
+    "Statement rings, chains & lockets and bracelets in gold, silver and two-tone. Jewellery for those who define their own style, shipped all over Pakistan.",
   instagram: "https://www.instagram.com/_diamentory/",
+  /** Default share image (genuine studio frame) — spread into every page-level openGraph. */
+  ogImages: [{ url: "/images/products/chain-cuban-silver.jpg", width: 768, height: 1376, alt: "Silver Cuban link chain by Diamentory" }],
   instagramHandle: "@_diamentory",
   currency: "PKR",
   country: "Pakistan",

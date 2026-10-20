@@ -1,65 +1,36 @@
 # Diamentory — delivery status
 
-_Frontend phase, October 2026._
+_Public storefront, updated 19 October 2026. Read with `docs/REVISION_BRIEF.md`._
 
-## Fully functional now (frontend)
+## Live and working (frontend)
 
-- **Homepage**: the full nine-section editorial sequence:
-  hero → categories → signature selection → statement → explore by finish → new arrivals → brand story → styled moments → final statement.
-- **Catalogue pages**: Shop All, Chains & Necklaces, Bracelets, Rings, Pendants, Sets & Stacks, New Arrivals, Collections (index plus Gold / Silver / Black / Two-Tone) and Search.
-  - Search, finish and category filters, in-stock toggle, sorting and "Load more" all work.
-  - Product counts are accurate.
-  - Filter state lives in the URL, so it can be shared and crawled.
-  - On mobile, filters open in a bottom sheet.
-- **Product pages**:
-  - Swipeable mobile gallery showing image counts, and an enlarged viewer with zoom.
-  - Finish and size selection, with sold-out options and sold-out combinations handled.
-  - Stock messaging, quantity, Add to bag and Buy now.
-  - Sticky mobile buy bar with a bottom-sheet size picker.
-  - Complementary products and recently viewed.
-  - Breadcrumbs, plus Product and BreadcrumbList JSON-LD.
-- **Bag**: drawer and full page.
-  - Quantity changes and removal.
-  - Price-change and stock-issue warnings.
-  - Saved in the browser (localStorage).
-- **Checkout**: guest checkout with full validation.
-  - Pakistani mobile number format, province list, error summary and focus management.
-  - Draft survives a page refresh (sessionStorage).
-  - Delivery method and payment choice (cash on delivery / bank transfer).
-- **Other pages**: Track Order form, Contact, Shipping, Returns, FAQ (with FAQPage JSON-LD), Privacy, Terms, Our Story, Lookbook, and custom 404 and error pages.
-- **SEO and accessibility**:
-  - Unique metadata and canonical URLs per page, OpenGraph tags, sitemap.xml and robots.txt.
-  - Skip link, visible focus, native `<dialog>` modals (focus trapping, Esc to close), touch targets of at least 44px.
-  - Respects `prefers-reduced-motion`; no horizontal overflow down to 320px.
+- **Three categories everywhere**: Rings · Chain & Lockets · Bracelets (`CATEGORIES` in `src/lib/catalog`). Styles (Cuban link, locket, rope, band, statement…) are filters (`?style=`), not categories. Retired URLs (`/shop/pendants`, `/shop/sets`, old product slugs) redirect.
+- **Catalogue**: 20 products, every one shown in Diamentory's own photographs: 17 studio frames in `public/images/products/`, plus Instagram frames in `public/images/brand/` (bracelets have no studio shots yet). Licensed Pexels images are used only for mood moments, never as products.
+- **Shop**: search, category/style/finish filters, in-stock toggle, sorting, load more, filter state in the URL, bottom-sheet filters on phones.
+- **Product pages**: swipeable gallery and zoom viewer, finish and size selection, sold-out handling, quantity, Add to bag / Buy now, sticky mobile buy bar, "Wear it with" products, recently viewed, breadcrumbs.
+- **Bag**: drawer and full page, saved in the browser.
+- **Checkout**: guest checkout with full validation (Pakistani mobile format, province list, error summary, focus management), draft kept on refresh.
+- **Design system**: Unbounded (display) + Manrope (text); black and white with one electric-blue accent for index tags and focus rings; tokens for gutters, sections, grid, type, buttons and image ratios in `src/app/globals.css`.
+- **Motion**: hero image wipes, headline line reveals, scroll reveals and image masks, drawer/menu/sheet transitions, button and add-to-bag feedback, route crossfade (View Transitions). All of it is off under reduced motion.
+- **SEO and accessibility**: per-page titles, canonicals and OpenGraph images (genuine photos); sitemap.xml and robots.txt; Product + BreadcrumbList + FAQPage JSON-LD; skip link, visible focus, native dialogs, 44px+ touch targets.
 
-## Honest placeholders — nothing is simulated
+## Clearly marked as not live (nothing is simulated)
 
-- **Product data is sample data** (`src/lib/catalog/fixtures.ts`), and a site-wide banner says so.
-  - Product images are original illustrations, not photographs.
-  - Materials, dimensions and care text are not shown; the product page says "to be confirmed".
-- **Placing an order is not live yet.** `submitOrder()` in `src/lib/checkout/submit.ts` always returns `unavailable`.
-  - The customer sees a clear message that no order was placed and no payment was taken.
-  - They can copy their order summary or send it via Instagram.
-- **Order tracking** validates its form, then explains that tracking opens when online ordering launches.
-- **Business facts are shown as "To be confirmed"** until provided: delivery fee and times, return window, email, phone, WhatsApp, opening hours and bank details.
-- **Privacy and Terms** are structured drafts marked "pending review".
+- **Prices, sizes/lengths and stock are SAMPLE values** (`src/lib/catalog/fixtures.ts`, `isFixture: true`). A site-wide banner says so. While products are fixtures, product structured data omits price/availability, so search engines never index sample prices.
+- **Placing an order is not live.** `submitOrder()` (`src/lib/checkout/submit.ts`) returns `unavailable`. The customer is told no order was placed and no payment was taken. There is no order confirmation page yet.
+- **Order tracking** validates the form, then explains that tracking opens with online ordering.
+- **Business facts show "To be confirmed"**: delivery fee and times, return window, contact details, bank details.
+- **Privacy and Terms** are drafts pending review.
 
-## Awaiting your input
+## Needed from the client
 
-1. Logo files, product photography and editorial/lookbook images. Put them in `brand-assets/`.
-2. The real catalogue: names, categories, finishes, sizes, PKR prices and stock. Add materials, dimensions and care only where they are verified.
-3. Business details: delivery fees, courier and delivery times, return/exchange policy, contact details, bank account for transfers.
-4. Payment gateway choice and merchant credentials (Safepay, PayFast, etc.).
-5. Production domain. Set `NEXT_PUBLIC_SITE_URL`.
-6. Legal review of the Privacy and Terms pages.
+1. The real catalogue: product names, PKR prices, sizes/lengths, stock, plus materials and care only where verified.
+2. Studio photos of the bracelets (currently Instagram frames, max ~720px wide), and higher-resolution originals of the studio shots if available (current files are 768×1376).
+3. Business details: delivery fees, courier and times, return/exchange policy, phone/WhatsApp/email, bank account for transfers.
+4. Payment gateway choice and merchant credentials (e.g. Safepay, PayFast), or confirmation that it's cash on delivery plus bank transfer only.
+5. Production domain (`NEXT_PUBLIC_SITE_URL`). Canonicals, sitemap and OG URLs depend on it.
+6. Legal review of Privacy and Terms.
 
-## Next phase: backend
+## Backend (parked on local branch `admin-backend-wip`)
 
-- Postgres with Prisma: products, variants and inventory, plus orders.
-- Server-side order creation that is idempotent and re-checks prices and stock on the server.
-- Cash on delivery and bank transfer workflows.
-- Gateway adapter with webhook verification.
-- Order confirmation page and email.
-- Admin area: products, photos, variants, inventory, orders, delivery charges, coupons, homepage features, and reports.
-- Playwright end-to-end test suite in CI.
-- Lighthouse audits on a production-like deployment.
+Database, real order creation, admin (products, inventory, orders) are in progress on that branch. Before it can be merged it needs Neon Postgres, Vercel Blob and the admin env vars.

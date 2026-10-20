@@ -463,6 +463,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
@@ -477,6 +478,20 @@ body {
   }
   .drift > * {
     transform: none !important;
+  }
+}
+
+/* ── Route transition: short crossfade of <main> (React <ViewTransition> in the root layout) ── */
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 0.32s;
+  animation-timing-function: var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 
@@ -587,6 +602,62 @@ html:has(dialog[open]) {
   .group:hover .frame-zoom > * {
     transform: scale(1.04);
   }
+}
+
+/* Chain & Lockets explorer: layered photographs crossfade, the incoming one settles from a slight zoom */
+.chain-shot {
+  opacity: 0;
+  transform: scale(1.04);
+  transition:
+    opacity var(--dur-3) var(--ease-out),
+    transform var(--dur-4) var(--ease-out);
+}
+.chain-shot.is-active {
+  opacity: 1;
+  transform: none;
+}
+/* Index rows: the active style slides in a hairline marker and nudges right */
+.chain-row {
+  position: relative;
+  transition: color var(--dur-2) var(--ease-out);
+}
+.chain-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1.5rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.chain-row > :first-child {
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+.chain-row-name {
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.chain-row[data-active]::before {
+  transform: scaleX(1);
+}
+.chain-row[data-active] > :first-child {
+  opacity: 0;
+}
+.chain-row[data-active] .chain-row-name {
+  transform: translateX(0.5rem);
+}
+.chain-row-arrow {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
+}
+.chain-row[data-active] .chain-row-arrow {
+  opacity: 1;
+  transform: none;
 }
 
 /* Tabs: newly shown panel eases in */

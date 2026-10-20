@@ -40,11 +40,11 @@ export function CartLines({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   {p ? (
-                    <Link href={`/product/${p.slug}`} onClick={onNavigate} className="link-line text-[0.95rem]">
+                    <Link href={`/product/${p.slug}`} onClick={onNavigate} className="link-line text-[0.9375rem]">
                       {p.name}
                     </Link>
                   ) : (
-                    <span className="text-[0.95rem]">Item no longer available</span>
+                    <span className="text-[0.9375rem]">Item no longer available</span>
                   )}
                   {v && (
                     <p className="mt-1 text-xs text-stone">

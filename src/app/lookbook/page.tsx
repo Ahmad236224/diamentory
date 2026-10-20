@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Diamentory pieces as photographed in the studio and on our Instagram — rings, chains & lockets, and bracelets, with links to shop each piece.",
   alternates: { canonical: "/lookbook" },
-  openGraph: { title: "Lookbook — DIAMENTORY", url: "/lookbook" },
+  openGraph: { images: SITE.ogImages, title: "Lookbook — DIAMENTORY", url: "/lookbook" },
 };
 
 /** Frames: [product slug, image index]. Real photographs only, straight from the catalogue. */

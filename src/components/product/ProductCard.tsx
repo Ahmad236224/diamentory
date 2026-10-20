@@ -68,12 +68,12 @@ export function ProductCard({
       </div>
       <div className="mt-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-[0.9rem] leading-snug">
+          <h3 className="text-[0.875rem] leading-snug font-medium tracking-[-0.005em]">
             <Link href={href} className="link-line">
               {product.name}
             </Link>
           </h3>
-          <p className="mt-0.5 text-[0.8rem] text-stone tabular-nums">{formatPriceRange(min, max)}</p>
+          <p className="mt-1 text-[0.875rem] text-graphite tabular-nums">{formatPriceRange(min, max)}</p>
         </div>
         <ul className="mt-1 flex shrink-0 gap-1" aria-label="Available finishes">
           {finishes.map((x) => (

@@ -408,8 +408,8 @@ function Step({
 }) {
   return (
     <fieldset className="border-t border-obsidian/10 pt-7 pb-10" aria-describedby={errorId}>
-      <legend className="float-left mb-7 flex w-full items-baseline gap-4">
-        <span className="text-[0.6875rem] tabular-nums tracking-[0.2em] text-stone">{n}</span>
+      <legend className="float-left mb-7 flex w-full items-center gap-3">
+        <span className="tag tabular-nums">{n}</span>
         <span className="t-h3">{title}</span>
         {optional && <span className="ml-auto text-xs text-stone">Optional</span>}
       </legend>
@@ -467,7 +467,7 @@ function ChoiceCard({
       />
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
-          <span className={clsx("text-[0.95rem]", !disabled && "text-obsidian")}>{title}</span>
+          <span className={clsx("text-[0.9375rem]", !disabled && "text-obsidian")}>{title}</span>
           {aside && <span className="text-sm">{aside}</span>}
         </span>
         {children && (

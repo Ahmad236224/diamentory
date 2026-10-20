@@ -5,7 +5,7 @@ import { FrameCaption, SectionHead } from "./SectionHead";
 
 /**
  * No studio bracelet photography exists: these are the brand's own Instagram frames (720–1080 px wide),
- * so they stay at modest sizes — four native 9:16 frames, stepped like a contact sheet.
+ * so they stay within their native width — four 9:16 frames across the full row, stepped like a contact sheet.
  */
 const FRAMES = [
   { id: "brand-iced-cuban-bracelet-wrist", href: "/product/iced-cuban-bracelet", name: "Iced Cuban Bracelet", focus: "50% 45%" },
@@ -14,7 +14,7 @@ const FRAMES = [
   { id: "brand-iced-cuban-bracelet-fist", href: "/product/iced-cuban-bracelet", name: "Iced Cuban, worn", focus: "50% 40%" },
 ];
 
-/** 03 — Bracelets. Black chapter. */
+/** 03 — Bracelets. Black chapter: title row, then the frames across the full width. */
 export function BraceletsSection() {
   const cat = getCategory("bracelets")!;
   const styles = stylesOf(getAllProducts().filter((p) => p.category === "bracelets"));
@@ -23,17 +23,17 @@ export function BraceletsSection() {
       <div className="wrap">
         <SectionHead n="03" label={cat.name} href="/shop/bracelets" cta="Shop bracelets" tone="dark" />
 
-        <div className="mt-8 grid gap-y-10 lg:mt-12 lg:grid-cols-12 lg:gap-x-[var(--grid-gap)]">
-          <div className="lg:col-span-4">
-            <h2 id="bracelets-title" className="t-h2 reveal">
-              Weight at
-              <br />
-              <em>the wrist.</em>
-            </h2>
-            <p className="reveal mt-5 max-w-[26rem] text-champagne" style={{ "--d": "100ms" } as React.CSSProperties}>
+        <div className="mt-8 grid gap-y-6 lg:mt-12 lg:grid-cols-12 lg:items-end lg:gap-x-[var(--grid-gap)]">
+          <h2 id="bracelets-title" className="t-h2 reveal lg:col-span-6">
+            Weight at
+            <br />
+            <em>the wrist.</em>
+          </h2>
+          <div className="lg:col-span-5 lg:col-start-8">
+            <p className="reveal max-w-[26rem] text-pretty text-champagne" style={{ "--d": "100ms" } as React.CSSProperties}>
               Cuban link and iced bracelets, worn alone or stacked.
             </p>
-            <ul className="reveal mt-8 flex flex-wrap gap-2" style={{ "--d": "180ms" } as React.CSSProperties}>
+            <ul className="reveal mt-6 flex flex-wrap gap-2" style={{ "--d": "180ms" } as React.CSSProperties}>
               {styles.map((s) => (
                 <li key={s}>
                   <Link
@@ -46,22 +46,28 @@ export function BraceletsSection() {
               ))}
             </ul>
           </div>
-
-          <ul className="reveal-stagger grid grid-cols-2 items-start gap-[var(--grid-gap)] sm:grid-cols-4 lg:col-span-8">
-            {FRAMES.map((f) => (
-              <li key={f.id} className="even:mt-10 lg:even:mt-16">
-                <Link href={f.href} className="group block">
-                  <div className="ratio-tall relative overflow-hidden">
-                    <div className="frame-zoom absolute inset-0">
-                      <Photo id={f.id} dark sizes="(min-width:1024px) 15vw, (min-width:640px) 22vw, 45vw" position={f.focus} className="absolute inset-0" />
-                    </div>
-                  </div>
-                  <FrameCaption name={f.name} tone="dark" />
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
+
+        <ul className="reveal-stagger mt-10 grid grid-cols-2 items-start gap-[var(--grid-gap)] sm:grid-cols-4 lg:mt-16">
+          {FRAMES.map((f) => (
+            <li key={f.id} className="even:mt-10 lg:even:mt-16">
+              <Link href={f.href} className="group block">
+                <div className="ratio-tall relative overflow-hidden">
+                  <div className="frame-zoom absolute inset-0">
+                    <Photo
+                      id={f.id}
+                      dark
+                      sizes="(min-width:1024px) 22vw, (min-width:640px) 24vw, 46vw"
+                      position={f.focus}
+                      className="absolute inset-0"
+                    />
+                  </div>
+                </div>
+                <FrameCaption name={f.name} tone="dark" />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

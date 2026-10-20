@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE } from "@/content/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title: `${f.name} Jewellery`,
     description: `${f.note} Rings, chains & lockets, and bracelets in the ${f.name.toLowerCase()} finish.`,
     alternates: { canonical: `/collections/${f.slug}` },
-    openGraph: { title: `${f.name} Collection — DIAMENTORY`, url: `/collections/${f.slug}` },
+    openGraph: { images: SITE.ogImages, title: `${f.name} Collection — DIAMENTORY`, url: `/collections/${f.slug}` },
   };
 }
 

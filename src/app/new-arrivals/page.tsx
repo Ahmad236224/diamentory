@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE } from "@/content/site";
 import { Suspense } from "react";
 import { queryProducts } from "@/lib/catalog";
 import { Listing, ListingSkeleton } from "@/components/catalog/Listing";
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   title: "New Arrivals",
   description: "The latest Diamentory pieces — new rings, chains & lockets, and bracelets.",
   alternates: { canonical: "/new-arrivals" },
-  openGraph: { title: "New Arrivals — DIAMENTORY", url: "/new-arrivals" },
+  openGraph: { images: SITE.ogImages, title: "New Arrivals — DIAMENTORY", url: "/new-arrivals" },
 };
 
 const CONFIG: ListingConfig = { basePath: "/new-arrivals", newOnly: true, allowCategory: true, defaultSort: "newest" };

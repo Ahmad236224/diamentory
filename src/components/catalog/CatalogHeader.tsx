@@ -94,6 +94,7 @@ export function PageHeader({
   meta,
   crumbs,
   children,
+  size = "h1",
 }: {
   eyebrow: React.ReactNode;
   title: React.ReactNode;
@@ -105,6 +106,8 @@ export function PageHeader({
   crumbs?: { href?: string; label: string }[];
   /** Extra content under the intro (e.g. the search field). */
   children?: React.ReactNode;
+  /** "h2" = compact title for task pages (checkout) where the form should lead. */
+  size?: "h1" | "h2";
 }) {
   return (
     <header className="wrap pt-2 pb-8 lg:pt-4 lg:pb-12">
@@ -112,7 +115,7 @@ export function PageHeader({
       <div className="grid-12 mt-2 items-end gap-y-6 lg:mt-8">
         <div className={clsx("reveal col-span-12", media && "lg:col-span-7")}>
           <p className="eyebrow flex items-center gap-3 text-stone">{eyebrow}</p>
-          <h1 className="t-h1 mt-4 text-balance">
+          <h1 className={clsx(size === "h2" ? "t-h2" : "t-h1", "mt-4 text-balance")}>
             {title}
             {accent && (
               <>

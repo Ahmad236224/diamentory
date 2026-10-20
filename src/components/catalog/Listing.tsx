@@ -129,7 +129,7 @@ export function CategoryLinks({ className, align = "center" }: { className?: str
 /** Static fallback that mirrors the listing layout (no CLS). */
 export function ListingSkeleton({ quickChips = true }: { quickChips?: boolean }) {
   return (
-    <div aria-hidden="true">
+    <div aria-hidden="true" className="min-h-[100svh]">
       <div className="border-y border-obsidian/10">
         <div className="wrap flex h-14 items-center justify-between lg:h-16">
           <div className="skeleton h-3 w-28" />

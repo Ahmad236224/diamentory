@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ViewTransition } from "react";
 import { Unbounded, Manrope } from "next/font/google";
 import { RevealObserver } from "@/components/motion/RevealObserver";
 import { SITE } from "@/content/site";
@@ -35,9 +36,11 @@ export const metadata: Metadata = {
     type: "website",
     siteName: SITE.name,
     locale: "en_PK",
+    // Default share image: a genuine Diamentory studio frame. Pages may override.
+    images: SITE.ogImages,
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: "/" },
+  // No site-wide canonical: each page declares its own (a root "/" default would point every page at the homepage).
 };
 
 export const viewport: Viewport = {
@@ -61,7 +64,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CartProvider>
           <FixtureNotice />
           <SiteHeader />
-          <main id="main">{children}</main>
+          {/* Route changes crossfade (View Transitions API; no-op where unsupported, off for reduced motion) */}
+          <ViewTransition>
+            <main id="main">{children}</main>
+          </ViewTransition>
           <SiteFooter />
           <CartDrawer />
         </CartProvider>

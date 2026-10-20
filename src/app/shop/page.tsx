@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE } from "@/content/site";
 import { Suspense } from "react";
 import { getAllProducts } from "@/lib/catalog";
 import { Listing, ListingSkeleton } from "@/components/catalog/Listing";
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   title: "Shop All Jewellery",
   description: "Every Diamentory piece in one place — rings, chains & lockets, and bracelets.",
   alternates: { canonical: "/shop" },
-  openGraph: { title: "Shop All — DIAMENTORY", url: "/shop" },
+  openGraph: { images: SITE.ogImages, title: "Shop All — DIAMENTORY", url: "/shop" },
 };
 
 const CONFIG: ListingConfig = { basePath: "/shop", allowCategory: true };

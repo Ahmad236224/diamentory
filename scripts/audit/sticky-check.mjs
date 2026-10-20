@@ -3,7 +3,7 @@ import { chromium, devices } from "@playwright/test";
 const out = process.argv[2];
 const b = await chromium.launch();
 const p = await (await b.newContext({ ...devices["iPhone 13"] })).newPage();
-await p.goto("http://localhost:3217/shop", { waitUntil: "networkidle" });
+await p.goto((process.env.BASE ?? "http://localhost:3217") + "/shop", { waitUntil: "networkidle" });
 for (const frac of [0.35, 0.7, 0.92]) {
   await p.evaluate((f) => scrollTo(0, document.documentElement.scrollHeight * f), frac);
   await p.waitForTimeout(700);

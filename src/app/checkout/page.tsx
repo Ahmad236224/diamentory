@@ -22,6 +22,7 @@ export default function Page() {
         crumbs={[{ href: "/cart", label: "Bag" }, { label: "Checkout" }]}
         eyebrow="Guest checkout"
         title="Checkout"
+        size="h2"
       />
       <Checkout />
     </>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE } from "@/content/site";
 import Link from "next/link";
 import { queryProducts } from "@/lib/catalog";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   title: "Collections by Finish",
   description: "Shop Diamentory by finish — rings, chains & lockets, and bracelets in gold, silver and two-tone.",
   alternates: { canonical: "/collections" },
-  openGraph: { title: "Collections — DIAMENTORY", url: "/collections" },
+  openGraph: { images: SITE.ogImages, title: "Collections — DIAMENTORY", url: "/collections" },
 };
 
 const WORDS = ["One", "Two", "Three", "Four"];

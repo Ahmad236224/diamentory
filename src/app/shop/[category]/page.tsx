@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE } from "@/content/site";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CATEGORIES, getCategory, queryProducts } from "@/lib/catalog";
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title: c.name,
     description: `${c.tagline} ${c.intro}`,
     alternates: { canonical: `/shop/${c.slug}` },
-    openGraph: { title: `${c.name} — DIAMENTORY`, description: c.intro, url: `/shop/${c.slug}` },
+    openGraph: { images: SITE.ogImages, title: `${c.name} — DIAMENTORY`, description: c.intro, url: `/shop/${c.slug}` },
   };
 }
 

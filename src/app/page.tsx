@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: { absolute: "DIAMENTORY — Not Made to Blend In" },
   description: SITE.description,
   alternates: { canonical: "/" },
-  openGraph: {
+  openGraph: { images: SITE.ogImages,
     title: "DIAMENTORY — Not Made to Blend In",
     description: "Statement rings, chains & lockets and bracelets. Shipping all over Pakistan.",
     url: "/",

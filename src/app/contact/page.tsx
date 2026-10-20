@@ -95,7 +95,7 @@ export default function Page() {
             {rows.map((r) => (
               <div key={r.label} className="grid grid-cols-[6.5rem_1fr] items-baseline gap-4 border-b border-obsidian/10 py-5 sm:grid-cols-[10rem_1fr]">
                 <dt className="text-sm text-stone">{r.label}</dt>
-                <dd className="min-w-0 break-words text-[0.95rem]">{r.value}</dd>
+                <dd className="min-w-0 break-words text-[0.9375rem]">{r.value}</dd>
               </div>
             ))}
           </dl>
@@ -108,7 +108,7 @@ export default function Page() {
           <ul className="border-t border-obsidian/10">
             {NAV_SUPPORT.filter((n) => n.href !== "/contact").map((n) => (
               <li key={n.href} className="border-b border-obsidian/10">
-                <Link href={n.href} className="group flex min-h-14 items-center justify-between text-[0.95rem]">
+                <Link href={n.href} className="group flex min-h-14 items-center justify-between text-[0.9375rem]">
                   {n.label}
                   <IconArrow size={16} className="transition-transform group-hover:translate-x-1" />
                 </Link>

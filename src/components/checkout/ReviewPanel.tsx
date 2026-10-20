@@ -41,11 +41,11 @@ export function ReviewPanel({ details: d, onEdit }: { details: CheckoutDetails; 
       <h2 id="co-review-h" ref={headingRef} tabIndex={-1} className="t-h2 mt-4 focus:outline-none">
         Your order details are <em>complete.</em>
       </h2>
-      <div role="status" className="mt-8 border-l-2 border-obsidian py-1 pl-4 text-[0.95rem] leading-relaxed text-graphite">
+      <div role="status" className="mt-8 border-l-2 border-obsidian py-1 pl-4 text-[0.9375rem] leading-relaxed text-graphite">
         Online ordering opens soon —{" "}
         <strong className="font-medium text-obsidian">we have not placed an order or taken payment.</strong>
       </div>
-      <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-relaxed text-graphite">
+      <p className="mt-5 max-w-[52ch] text-[0.9375rem] leading-relaxed text-graphite">
         To continue now, copy your order summary and send it to us as an Instagram message. Your bag stays saved on this
         device.
       </p>
